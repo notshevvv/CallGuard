@@ -68,15 +68,15 @@
 ```mermaid
 flowchart LR
     subgraph apps[Your apps]
-        media["YouTube · Spotify · games"]
-        call["WhatsApp call"]
+        apps1["YouTube · Spotify · games"]
+        voice["WhatsApp call"]
     end
     decoy[("Mac speakers<br/>(hardware-muted decoy:<br/>ducking happens here)")]
     engine["CallGuard engine<br/>volume · bass · Night Mode<br/>sleep fade · call volume · limiter"]
     buds["🎧 Your earbuds"]
-    media -- "process tap<br/>(before ducking)" --> engine
-    call -- "plays to" --> decoy
-    call -. "process tap<br/>(before the mute)" .-> engine
+    apps1 -- "process tap<br/>(before ducking)" --> engine
+    voice -- "plays to" --> decoy
+    voice -. "process tap<br/>(before the mute)" .-> engine
     engine --> buds
 ```
 
