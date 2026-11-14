@@ -6,6 +6,9 @@ on:
     tags: ["v*"]
   pull_request:
 
+permissions:
+  contents: write   # lets tagged builds attach CallGuard.zip to the release
+
 jobs:
   build:
     runs-on: macos-26
