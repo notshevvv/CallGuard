@@ -185,6 +185,11 @@ final class AudioEngine {
     private var engagedAt = Date.distantPast
     private var currentOutputUID = ""
     private var currentRate: Double = 0
+    /// Fallback: carry the call voice inside the media tap (no separate call bus).
+    private var singleTap = false
+    private var failures = 0
+    private var retryAt = Date.distantPast
+    private var restartPending = false
 
     func setOn(_ on: Bool) {
         guard on != isOn else { return }
@@ -235,7 +240,7 @@ final class AudioEngine {
             }
             let out = self.targetOutput
             if self.running, CA.uid(out) ?? "" == self.currentOutputUID, CA.sampleRate(out) == self.currentRate { return }
-            self.stop(); self.start()
+            self.stop(); self.restartSoon()
         }
     }
 
@@ -266,7 +271,25 @@ final class AudioEngine {
         lastError = msg
         NSLog("CallGuard engine: %@", msg)
         stop()
+        failures += 1
+        retryAt = Date().addingTimeInterval(min(pow(2, Double(failures)), 30))
+        // Never leave the call on the muted decoy without the engine carrying it.
+        if decoy.active {
+            decoy.release()
+            onEvent?("exclamationmark.triangle", "Audio engine hiccup: call sound put back on your earbuds")
+        }
         onChange?()
+    }
+
+    /// Core Audio needs a moment to tear down taps before new ones can be made.
+    private func restartSoon() {
+        guard !restartPending else { return }
+        restartPending = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
+            guard let self else { return }
+            self.restartPending = false
+            if self.isOn, !self.running { self.start() }
+        }
     }
 
     private func start() {
@@ -278,24 +301,36 @@ final class AudioEngine {
 
         let plan = makePlan()
         planKey = plan.key
-        callApps = plan.names; untouchedCall = plan.untouched; callViaUs = !plan.captured.isEmpty
+        callApps = plan.names; untouchedCall = plan.untouched; callViaUs = !plan.captured.isEmpty && !singleTap
         apply()
 
         // 1. Taps: media = everything except us and call apps; call = the call apps we carry.
-        var excluded = plan.callProcs
+        if plan.callProcs.isEmpty { singleTap = false }
+        var excluded = singleTap ? plan.callProcs.filter { !plan.captured.contains($0) } : plan.callProcs
         if let mine = CA.processObject(pid: getpid()) { excluded.append(mine) }
         let media = onlyProcesses.isEmpty
             ? CATapDescription(stereoGlobalTapButExcludeProcesses: excluded)
             : CATapDescription(stereoMixdownOfProcesses: onlyProcesses)
         var descs = [media]
-        if !plan.captured.isEmpty { descs.append(CATapDescription(stereoMixdownOfProcesses: plan.captured)) }
+        if !plan.captured.isEmpty, !singleTap { descs.append(CATapDescription(stereoMixdownOfProcesses: plan.captured)) }
+        let testUnmuted = ProcessInfo.processInfo.environment["CG_UNMUTED"] != nil
         for (i, d) in descs.enumerated() {
             d.name = i == 0 ? "CallGuard media" : "CallGuard call"
             d.isPrivate = true
-            d.muteBehavior = .mutedWhenTapped
+            d.muteBehavior = testUnmuted ? .unmuted : .mutedWhenTapped
             var t = AudioObjectID(kAudioObjectUnknown)
             let st = AudioHardwareCreateProcessTap(d, &t)
-            guard st == noErr, t != kAudioObjectUnknown else { return fail("Could not create audio tap (\(st))") }
+            guard st == noErr, t != kAudioObjectUnknown else {
+                if i == 1 {
+                    // The separate call tap failed: fall back to carrying the call in the media tap.
+                    for t in taps { AudioHardwareDestroyProcessTap(t) }
+                    taps.removeAll()
+                    singleTap = true
+                    onEvent?("arrow.triangle.merge", "Call voice carried with media (simpler mode)")
+                    return start()
+                }
+                return fail("Could not create audio tap (\(st))")
+            }
             taps.append(t)
         }
 
@@ -337,6 +372,7 @@ final class AudioEngine {
         }
 
         running = true
+        failures = 0
         currentOutputUID = outUID
         currentRate = CA.sampleRate(out)
         outputName = CA.name(out)
@@ -360,8 +396,10 @@ final class AudioEngine {
             return poll(force: true)
         }
         let changed = plan.names != callApps || plan.untouched != untouchedCall
-        if plan.key != planKey || (!running && lastError == nil) {
-            stop(); start()
+        if running, plan.key != planKey {
+            stop(); restartSoon()
+        } else if !running, !restartPending, Date() >= retryAt {
+            start()
         }
         if changed || force { onChange?() }
     }
@@ -371,7 +409,7 @@ final class AudioEngine {
         let me = getpid()
         let onCall = CA.processObjects.contains { CA.pid(of: $0) != me && CA.isRunningInput($0) }
         if !onCall { decoyRefused = false; decoyNote = nil }
-        let want = isOn && running && stopDucking && onCall && !decoyRefused
+        let want = isOn && (running || restartPending) && stopDucking && onCall && !decoyRefused
         if want, !decoy.active {
             let real = CA.defaultOutput
             if decoy.engage(real: real) {
