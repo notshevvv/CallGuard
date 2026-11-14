@@ -1,0 +1,8 @@
+Windows Registry Editor Version 5.00
+
+; CallGuard: stop Windows lowering other sounds during calls.
+; Same as Sound Control Panel > Communications > "Do nothing".
+; Sign out and back in (or restart) for it to take effect.
+
+[HKEY_CURRENT_USER\Software\Microsoft\Multimedia\Audio]
+"UserDuckingPreference"=dword:00000003

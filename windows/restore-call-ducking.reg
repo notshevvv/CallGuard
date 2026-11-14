@@ -1,0 +1,7 @@
+Windows Registry Editor Version 5.00
+
+; CallGuard: undo stop-call-ducking.reg and go back to the Windows default
+; (other sounds are lowered during calls).
+
+[HKEY_CURRENT_USER\Software\Microsoft\Multimedia\Audio]
+"UserDuckingPreference"=-
