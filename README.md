@@ -41,6 +41,7 @@
 
 **For the call**
 - **Mic Lock**: hardware-level mute for every microphone, including ones that connect later (AirPods, USB headsets). A red **LOCKED** sign sits in the menu bar so you always know.
+- **One-click unmute**: click the red **LOCKED** icon (or the **Unmute me** button) and you're live straight away.
 - **Push-to-talk while locked**: hold **⌃⌥T** to speak, let go and you're muted again. **⌃⌥M** locks and unlocks from anywhere. No Accessibility permission needed.
 - **Blocked-unmute counter**: see how many times an earbud tap or an app tried to un-mute you overnight.
 - **No Ducking**: media stays at full volume during calls (details in [How it works](#how-it-works)).
@@ -137,6 +138,7 @@ Tick **Start at login** in the panel so CallGuard is always there when a call st
 | Control | What it does |
 |---|---|
 | Click the menu bar mic | Opens the panel. Click anywhere else or press Esc to close it. |
+| Click the red **LOCKED** icon | **Unmutes you instantly** (right-click still opens the panel). |
 | **Mic Lock** tile or **⌃⌥M** | Lock or unlock every microphone. |
 | Hold **⌃⌥T** | Talk while locked (the icon turns green and says **LIVE**). |
 | **No Ducking** tile | Keep media at full volume during calls (needs earbuds or headphones). |

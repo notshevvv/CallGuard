@@ -2,7 +2,7 @@
 # Builds CallGuard.app into ./dist   (usage: ./build.sh)
 set -euo pipefail
 cd "${0:A:h}"
-VERSION="${VERSION:-2.0.1}"
+VERSION="${VERSION:-3.0.0}"
 BUNDLE_ID="${BUNDLE_ID:-app.callguard.CallGuard}"
 
 swift build -c release --arch arm64 --arch x86_64 2>/dev/null || swift build -c release
