@@ -119,12 +119,21 @@ final class StatusController: NSObject {
         }
         b.image = img
         b.imagePosition = .imageLeading
-        b.toolTip = locked ? "CallGuard: mic LOCKED. No app can hear you." : "CallGuard"
+        b.toolTip = locked ? "Mic LOCKED. Click to unmute yourself. Right-click for the panel." : "CallGuard"
     }
 
     // MARK: panel
 
-    @objc func toggle() { panel.isVisible ? close() : open() }
+    /// One click on the red LOCKED icon unmutes you straight away. Right-click opens the panel.
+    @objc func toggle() {
+        let right = NSApp.currentEvent?.type == .rightMouseUp
+        if state.micLocked, !right, !panel.isVisible {
+            state.micLocked = false
+            updateIcon()
+            return
+        }
+        panel.isVisible ? close() : open()
+    }
 
     func open(at point: NSPoint? = nil, autoClose: Bool = true) {
         if let point { anchor = point }

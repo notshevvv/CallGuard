@@ -170,6 +170,8 @@ struct PanelView: View {
             Text(s.talking ? "Mic open while you hold \(Hotkeys.talkLabel)" : "Hold \(Hotkeys.talkLabel) to talk · \(Hotkeys.lockLabel) to unlock")
                 .font(.system(size: 11.5))
             Spacer()
+            Button(s.talking ? "Live" : "Unmute me") { s.micLocked = false }
+                .controlSize(.small).glassButtonStyle().tint(Palette.live)
             if s.blockedUnmutes > 0 {
                 Text("\(s.blockedUnmutes) blocked")
                     .font(.system(size: 10.5, weight: .semibold)).monospacedDigit()
