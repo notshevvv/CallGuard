@@ -20,6 +20,51 @@
         ],
         "createdAt": "2026-11-16T17:16:21.129Z",
         "reason": "assistant: the drifting colour field is the committed Liquid Glass world in the surface brief, the field the glass refracts"
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "site/template.html"
+        ],
+        "createdAt": "2026-11-16T17:22:22.502Z",
+        "reason": "assistant: site/template.html is the unbuilt source with {{placeholders}}; the shipped page docs/index.html is checked instead"
+      },
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": [
+          "site/template.html"
+        ],
+        "createdAt": "2026-11-16T17:22:22.525Z",
+        "reason": "assistant: site/template.html is the unbuilt source with {{placeholders}}; the shipped page docs/index.html is checked instead"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "site/template.html"
+        ],
+        "createdAt": "2026-11-16T17:22:22.549Z",
+        "reason": "assistant: site/template.html is the unbuilt source with {{placeholders}}; the shipped page docs/index.html is checked instead"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "site/template.html"
+        ],
+        "createdAt": "2026-11-16T17:22:22.570Z",
+        "reason": "assistant: site/template.html is the unbuilt source with {{placeholders}}; the shipped page docs/index.html is checked instead"
+      },
+      {
+        "rule": "radial-halo",
+        "value": "*",
+        "files": [
+          "site/template.html"
+        ],
+        "createdAt": "2026-11-16T17:22:22.592Z",
+        "reason": "assistant: site/template.html is the unbuilt source with {{placeholders}}; the shipped page docs/index.html is checked instead"
       }
     ]
   }
