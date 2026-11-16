@@ -38,6 +38,7 @@ enum Palette {
     static let sound = Color(red: 1.0, green: 0.58, blue: 0.16)
     static let sleep = Color(red: 0.42, green: 0.45, blue: 1.0)
     static let live = Color(red: 0.2, green: 0.84, blue: 0.4)
+    static let fx = Color(red: 0.93, green: 0.33, blue: 0.75)
 }
 
 // MARK: - Panel
@@ -61,6 +62,7 @@ struct PanelView: View {
             })
         }
         .scrollBounceBehavior(.basedOnSize)
+        .defaultScrollAnchor(.top)
         .frame(width: 372, height: min(max(contentHeight, 200), maxHeight))
         .onPreferenceChange(ContentHeightKey.self) { h in if h > 0 { contentHeight = h } }
     }
@@ -71,6 +73,7 @@ struct PanelView: View {
             tiles
             if s.micLocked { lockStrip.transition(.move(edge: .top).combined(with: .opacity)) }
             soundCard
+            effectsCard
             sleepCard
             activity
             footer
@@ -167,7 +170,7 @@ struct PanelView: View {
             Image(systemName: s.talking ? "waveform" : "hand.raised.fill")
                 .foregroundStyle(s.talking ? Palette.live : Palette.lock)
                 .symbolEffect(.variableColor.iterative, isActive: s.talking)
-            Text(s.talking ? "Mic open while you hold \(Hotkeys.talkLabel)" : "Hold \(Hotkeys.talkLabel) to talk · \(Hotkeys.lockLabel) to unlock")
+            Text(s.talking ? "Mic open while you hold \(Hotkeys.talkLabel)" : "Hold \(Hotkeys.talkLabel) to talk")
                 .font(.system(size: 11.5))
             Spacer()
             Button(s.talking ? "Live" : "Unmute me") { s.micLocked = false }
@@ -209,6 +212,46 @@ struct PanelView: View {
         }
         .card()
     }
+
+    // MARK: effects
+
+    private var effectsCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            CardTitle(symbol: "sparkles", title: "Effects", tint: Palette.fx) {
+                Toggle("", isOn: $s.fxOn).toggleStyle(.switch).controlSize(.small).labelsHidden().tint(Palette.fx)
+            }
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 6)], spacing: 6) {
+                ForEach(AppState.fxPresets, id: \.name) { p in
+                    let on = s.fxOn && s.fxPreset == p.name
+                    Button { s.applyPreset(p) } label: {
+                        Label(p.name, systemImage: p.symbol)
+                            .font(.system(size: 11, weight: .medium)).lineLimit(1)
+                            .frame(maxWidth: .infinity).padding(.vertical, 6)
+                            .background(Capsule().fill(on ? AnyShapeStyle(Palette.fx.gradient) : AnyShapeStyle(Color.primary.opacity(0.07))))
+                            .foregroundStyle(on ? Color.white : Color.primary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            if s.fxOn {
+                LabeledSlider(label: pitchLabel, value: $s.fxPitch, range: -6...6, step: 0.5, tint: Palette.fx) {
+                    $0 == 0 ? "0" : String(format: "%+.1f", $0)
+                }
+                LabeledSlider(label: "Reverb", value: $s.fxReverb, range: 0...100, step: 1, tint: Palette.fx) { "\(Int($0))%" }
+                LabeledSlider(label: "Room", value: $s.fxRoom, range: 0...100, step: 1, tint: Palette.fx) {
+                    $0 < 34 ? "Small" : ($0 < 70 ? "Hall" : "Huge")
+                }
+                LabeledSlider(label: "Harmony", value: $s.fxHarmony, range: 0...100, step: 1, tint: Palette.fx) { "\(Int($0))%" }
+                LabeledSlider(label: "Width", value: $s.fxWidth, range: 0...200, step: 5, tint: Palette.fx) { "\(Int($0))%" }
+                Text("Music and videos only. The call voice stays clean.")
+                    .font(.system(size: 10.5)).foregroundStyle(.secondary)
+            }
+        }
+        .card()
+        .animation(.spring(response: 0.35, dampingFraction: 0.85), value: s.fxOn)
+    }
+
+    private var pitchLabel: String { s.fxPitch < 0 ? "Slowed" : (s.fxPitch > 0 ? "Sped up" : "Pitch") }
 
     // MARK: sleep
 

@@ -49,6 +49,41 @@ enum SelfTest {
         return (peak, lim)
     }
 
+
+    /// Renders a sine (or a single click when freq == 0) through the DSP; returns the left output.
+    static func render(_ dsp: DSP, freq: Double, amp: Float, seconds: Double, call: (Double, Float)? = nil) -> [Float] {
+        let fs = 48000.0, n = 512
+        let inList = AudioBufferList.allocate(maximumBuffers: call == nil ? 1 : 2)
+        let outList = AudioBufferList.allocate(maximumBuffers: 1)
+        let mBuf = UnsafeMutablePointer<Float>.allocate(capacity: n * 2)
+        let cBuf = UnsafeMutablePointer<Float>.allocate(capacity: n * 2)
+        let oBuf = UnsafeMutablePointer<Float>.allocate(capacity: n * 2)
+        inList[0] = AudioBuffer(mNumberChannels: 2, mDataByteSize: UInt32(n * 8), mData: mBuf)
+        if call != nil { inList[1] = AudioBuffer(mNumberChannels: 2, mDataByteSize: UInt32(n * 8), mData: cBuf) }
+        outList[0] = AudioBuffer(mNumberChannels: 2, mDataByteSize: UInt32(n * 8), mData: oBuf)
+        dsp.sampleRate = Float(fs); dsp.hasCallBus = call != nil; dsp.tapOffset = 0; dsp.coeffVersion &+= 1
+        var out: [Float] = []; var ph = 0.0, phc = 0.0, t = 0
+        for _ in 0..<(Int(seconds * fs) / n) {
+            for i in 0..<n {
+                let v: Float = freq == 0 ? (t == 0 ? amp : 0) : amp * Float(sin(ph))
+                mBuf[2 * i] = v; mBuf[2 * i + 1] = v; ph += 2 * .pi * freq / fs; t += 1
+                if let call { let c = call.1 * Float(sin(phc)); cBuf[2 * i] = c; cBuf[2 * i + 1] = c; phc += 2 * .pi * call.0 / fs }
+            }
+            dsp.process(input: inList, output: outList)
+            for i in 0..<n { out.append(oBuf[2 * i]) }
+        }
+        mBuf.deallocate(); cBuf.deallocate(); oBuf.deallocate(); free(inList.unsafeMutablePointer); free(outList.unsafeMutablePointer)
+        return out
+    }
+
+    /// Level (dB) of one frequency in a stretch of samples.
+    static func tone(_ x: ArraySlice<Float>, _ f: Double) -> Float {
+        let k = 2 * cos(2 * .pi * f / 48000); var s1 = 0.0, s2 = 0.0
+        for v in x { let s0 = Double(v) + k * s1 - s2; s2 = s1; s1 = s0 }
+        let p = s1 * s1 + s2 * s2 - k * s1 * s2
+        return Float(20 * log10(max(2 * sqrt(max(p, 0)) / Double(x.count), 1e-9)))
+    }
+
     static func dspTests() -> Never {
         var fails = 0
         func check(_ name: String, _ got: Float, _ want: Float, tol: Float = 0.6) {
@@ -80,6 +115,33 @@ enum SelfTest {
         check("call voice 150% (+3.5 dB), media muted", measure(d, media: (1000, 0), call: (440, 0.05)).0, -26.0 + 3.52)
         d = fresh(); d.mediaGain = 2; d.bassDB = 12
         check("bass/volume don't touch the call bus", measure(d, media: (1000, 0), call: (60, 0.05)).0, -26.0)
+
+        // Effects
+        func last(_ x: [Float]) -> ArraySlice<Float> { x[(x.count / 2)...] }
+        func fxdsp(_ set: (DSP) -> Void) -> DSP { let d = DSP(); d.fxOn = true; set(d); return d }
+        func checkGT(_ name: String, _ a: Float, _ b: Float, by: Float) {
+            let ok = a - b >= by; if !ok { fails += 1 }
+            print(String(format: "%@  %-46@ %.1f dB vs %.1f dB (need %.0f dB apart)", ok ? "PASS" : "FAIL", name as NSString, a, b, by))
+        }
+        var o = render(fxdsp { $0.fxSemitones = 3 }, freq: 440, amp: 0.1, seconds: 2)
+        let spedHz = 440 * pow(2, 3.0 / 12)
+        checkGT("Sped up +3: 440 Hz moves to 523 Hz", tone(last(o), spedHz), tone(last(o), 440), by: 20)
+        o = render(fxdsp { $0.fxSemitones = -3 }, freq: 1000, amp: 0.1, seconds: 2)
+        let slowedHz = 1000 * pow(2, -3.0 / 12)
+        checkGT("Slowed −3: 1000 Hz moves to 841 Hz", tone(last(o), slowedHz), tone(last(o), 1000), by: 20)
+        o = render(fxdsp { $0.fxHarmony = 0.6 }, freq: 1000, amp: 0.1, seconds: 2)
+        checkGT("Harmony adds the octave (2000 Hz)", tone(last(o), 2000), -80, by: 40)
+        o = render(fxdsp { $0.fxReverb = 0.5; $0.fxRoom = 0.8 }, freq: 0, amp: 0.8, seconds: 2)
+        let tail = o[(48000 / 2)..<(48000)].map { $0 * $0 }.reduce(0, +)
+        let tailDB = 10 * log10f(max(tail / 24000, 1e-12))
+        checkGT("Reverb leaves a tail 0.5–1 s after a click", tailDB, -120, by: 40)
+        o = render(fxdsp { $0.fxSemitones = -3; $0.fxReverb = 0.5; $0.fxHarmony = 0.5 }, freq: 1000, amp: 0, seconds: 2, call: (440, 0.05))
+        check("effects never touch the call voice", tone(last(o), 440) == 0 ? 1e-9 : powf(10, tone(last(o), 440) / 20), -26.0, tol: 0.3)
+        o = render(fxdsp { $0.fxReverb = 1; $0.fxRoom = 1; $0.fxHarmony = 1; $0.fxSemitones = 4; $0.fxWidth = 2 }, freq: 200, amp: 0.9, seconds: 3)
+        let pk = o.map { abs($0) }.max() ?? 0
+        let finite = o.allSatisfy { $0.isFinite }
+        print(String(format: "%@  %-46@ peak %.2f dBFS", (pk <= 0.8913 && finite) ? "PASS" : "FAIL", "everything maxed: no clipping, no blow-up" as NSString, 20 * log10f(pk)))
+        if !(pk <= 0.8913 && finite) { fails += 1 }
         print(fails == 0 ? "ALL DSP CHECKS PASSED" : "\(fails) DSP CHECK(S) FAILED")
         exit(fails == 0 ? 0 : 1)
     }

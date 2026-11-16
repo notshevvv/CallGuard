@@ -1,3 +1,4 @@
+import AppKit
 import CoreAudio
 import Foundation
 
@@ -19,6 +20,16 @@ final class DSP: @unchecked Sendable {
     var coeffVersion: Int32 = 0
     var tapOffset = 0                 // index of the first tap buffer in the IOProc input list
     var hasCallBus = false
+    // Effects (media only).
+    var fxOn = false
+    var fxSemitones: Float = 0
+    var fxHarmony: Float = 0          // 0…1
+    var fxReverb: Float = 0           // 0…1
+    var fxRoom: Float = 0.6           // 0…1
+    var fxWarmth: Float = 0.5         // 0…1
+    var fxWidth: Float = 1            // 0…2
+    let fx = Effects()
+    private var fxActive = false
 
     // Audio-thread state.
     private var gM: Float = 1, gC: Float = 1, fade: Float = 1
@@ -48,6 +59,9 @@ final class DSP: @unchecked Sendable {
         fadeSmooth = expf(-1 / (8 * fs))          // ~30 s gentle fade
         cAtt = expf(-1 / (0.005 * fs))
         cRel = expf(-1 / (0.25 * fs))
+        fx.configure(sampleRate: fs, semitones: fxOn ? fxSemitones : 0, harmonyMix: fxOn ? fxHarmony : 0,
+                     reverbMix: fxOn ? fxReverb : 0, room: fxRoom, warmth: fxWarmth, widthAmount: fxOn ? fxWidth : 1)
+        fxActive = fx.active
         let g = bassDB
         if abs(g) < 0.05 { b0 = 1; b1 = 0; b2 = 0; a1 = 0; a2 = 0; return }
         // RBJ low shelf, 110 Hz, slope 1.
@@ -107,6 +121,8 @@ final class DSP: @unchecked Sendable {
                 if cEnv > cThreshold { g *= expf((1 - 1 / cRatio) * logf(cThreshold / cEnv)) }
                 l *= g; r *= g
             }
+            // Effects: Slowed / Sped up, harmony, reverb, width.
+            if fxActive { fx.process(&l, &r) }
             let k = gM * fade
             l *= k; r *= k
             // Call voice, mixed in after the media chain.
@@ -153,6 +169,13 @@ final class AudioEngine {
     /// Fallback when a call app can't be moved: extra media gain to make up for the ducking.
     var callBoostDB: Double = 10 { didSet { apply() } }
     var mediaFade: Double = 1 { didSet { apply() } }
+    var fxOn = false { didSet { apply() } }
+    var fxSemitones: Double = 0 { didSet { apply() } }
+    var fxHarmony: Double = 0 { didSet { apply() } }      // %
+    var fxReverb: Double = 0 { didSet { apply() } }       // %
+    var fxRoom: Double = 60 { didSet { apply() } }        // %
+    var fxWarmth: Double = 50 { didSet { apply() } }      // %
+    var fxWidth: Double = 100 { didSet { apply() } }      // %
     var stopDucking = false { didSet { if oldValue != stopDucking { poll(force: true) } } }
 
     /// Apps using a mic right now (on a call).
@@ -190,6 +213,14 @@ final class AudioEngine {
     private var failures = 0
     private var retryAt = Date.distantPast
     private var restartPending = false
+    /// Polls in a row where apps were playing but every captured sample was exactly zero.
+    private var silentPolls = 0
+    private var lastBlocks = 0
+    /// True when macOS isn't letting CallGuard hear system audio (permission missing).
+    private(set) var captureBlocked = false
+    /// Real (non-zero) audio has come through the taps at least once. The decoy is only
+    /// used after this, so a missing permission can never leave a call on silent speakers.
+    private(set) var heardSomething = false
 
     func setOn(_ on: Bool) {
         guard on != isOn else { return }
@@ -220,6 +251,13 @@ final class AudioEngine {
         dsp.mediaFade = Float(mediaFade)
         dsp.bassDB = Float(bassDB)
         dsp.night = night
+        dsp.fxOn = fxOn
+        dsp.fxSemitones = Float(fxSemitones)
+        dsp.fxHarmony = Float(fxHarmony / 100)
+        dsp.fxReverb = Float(fxReverb / 100)
+        dsp.fxRoom = Float(fxRoom / 100)
+        dsp.fxWarmth = Float(fxWarmth / 100)
+        dsp.fxWidth = Float(fxWidth / 100)
         dsp.coeffVersion &+= 1
     }
 
@@ -389,6 +427,8 @@ final class AudioEngine {
         manageDecoy()
         guard isOn else { if force { onChange?() }; return }
         let plan = makePlan()
+        checkSilence()
+        writeStatus()
         if decoy.active, plan.untouched, Date().timeIntervalSince(engagedAt) > 4 {
             decoy.release(); decoyRefused = true
             decoyNote = "\(plan.names.joined(separator: ", ")) didn't switch, so media gets the extra boost instead"
@@ -404,12 +444,53 @@ final class AudioEngine {
         if changed || force { onChange?() }
     }
 
+    private func changedNames(_ plan: Plan) -> Bool { plan.names != callApps }
+
+    /// Silence guard: if apps are playing but the taps deliver exact digital zeros for ~6 s,
+    /// macOS is blocking capture (usually the System Audio Recording permission). Hand the
+    /// call back to the earbuds at once and show where to allow it.
+    private func checkSilence() {
+        guard running else { silentPolls = 0; return }
+        let me = getpid()
+        let othersPlaying = CA.processObjects.contains { CA.pid(of: $0) != me && CA.isRunningOutput($0) }
+        let advancing = dsp.blocks != lastBlocks
+        lastBlocks = dsp.blocks
+        let heard = advancing && (dsp.mediaPeak > 0 || dsp.callPeak > 0)
+        if heard { heardSomething = true }
+        if othersPlaying, !heard { silentPolls += 1 } else { silentPolls = 0; if heard { captureBlocked = false } }
+        guard silentPolls >= 3 else { return }
+        silentPolls = 0
+        captureBlocked = true
+        fail("macOS isn't letting CallGuard hear your audio. Turn CallGuard on in System Settings → Privacy & Security → Screen & System Audio Recording (under System Audio Recording Only), then reopen CallGuard.")
+        retryAt = Date().addingTimeInterval(60)
+        onEvent?("exclamationmark.octagon.fill", "Audio permission missing: sound sent straight to your output")
+        if let url = URL(string: "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_AudioCapture") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+
+    /// A small status file for troubleshooting: ~/Library/Application Support/CallGuard/status.json
+    private func writeStatus() {
+        func db(_ x: Float) -> Double { x > 0 ? (20 * log10(Double(x)) * 10).rounded() / 10 : -999 }
+        let dir = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support/CallGuard")
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let st: [String: Any] = [
+            "time": ISO8601DateFormatter().string(from: Date()),
+            "running": running, "output": outputName, "decoy": decoy.active, "singleTap": singleTap,
+            "callApps": callApps, "callViaUs": callViaUs, "mediaPeakDB": db(dsp.mediaPeak), "callPeakDB": db(dsp.callPeak),
+            "outPeakDB": db(dsp.outPeak), "blocks": dsp.blocks, "captureBlocked": captureBlocked, "heardSomething": heardSomething, "error": lastError ?? "",
+        ]
+        if let data = try? JSONSerialization.data(withJSONObject: st, options: [.prettyPrinted, .sortedKeys]) {
+            try? data.write(to: dir.appendingPathComponent("status.json"))
+        }
+    }
+
     /// Start or end the decoy as calls come and go.
     private func manageDecoy() {
         let me = getpid()
         let onCall = CA.processObjects.contains { CA.pid(of: $0) != me && CA.isRunningInput($0) }
         if !onCall { decoyRefused = false; decoyNote = nil }
-        let want = isOn && (running || restartPending) && stopDucking && onCall && !decoyRefused
+        let want = isOn && (running || restartPending) && stopDucking && onCall && !decoyRefused && !captureBlocked && heardSomething
         if want, !decoy.active {
             let real = CA.defaultOutput
             if decoy.engage(real: real) {

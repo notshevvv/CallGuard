@@ -2,7 +2,7 @@
 # Builds CallGuard.app into ./dist   (usage: ./build.sh)
 set -euo pipefail
 cd "${0:A:h}"
-VERSION="${VERSION:-3.0.0}"
+VERSION="${VERSION:-3.1.0}"
 BUNDLE_ID="${BUNDLE_ID:-app.callguard.CallGuard}"
 
 swift build -c release --arch arm64 --arch x86_64 2>/dev/null || swift build -c release
@@ -33,5 +33,12 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>NSMicrophoneUsageDescription</key><string>CallGuard only mutes and unmutes your microphones. It never listens.</string>
 </dict></plist>
 PLIST
-codesign --force --sign - "$APP"
+# Sign with a stable local identity when there is one, so macOS keeps CallGuard's
+# System Audio Recording permission across updates. Ad-hoc otherwise.
+IDENTITY="${SIGN_IDENTITY:-CallGuard Local Signing}"
+if security find-identity -p codesigning 2>/dev/null | grep -q "\"$IDENTITY\""; then
+  codesign --force --sign "$IDENTITY" "$APP"
+else
+  codesign --force --sign - "$APP"
+fi
 echo "Built $PWD/$APP"

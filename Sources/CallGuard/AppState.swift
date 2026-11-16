@@ -39,6 +39,43 @@ final class AppState: ObservableObject {
         d.set(night, forKey: "night.on"); syncEngine() } }
     @Published var callVolume: Double = 100 { didSet { guard !isDemo else { return }
         d.set(callVolume, forKey: "call.volume"); syncEngine() } }
+    // MARK: effects (saved)
+    @Published var fxOn = false { didSet { guard !isDemo else { return }; d.set(fxOn, forKey: "fx.on"); syncEngine() } }
+    @Published var fxPitch: Double = 0 { didSet { saveFX() } }        // semitones
+    @Published var fxReverb: Double = 0 { didSet { saveFX() } }       // %
+    @Published var fxRoom: Double = 60 { didSet { saveFX() } }        // %
+    @Published var fxHarmony: Double = 0 { didSet { saveFX() } }      // %
+    @Published var fxWidth: Double = 100 { didSet { saveFX() } }      // %
+    @Published var fxWarmth: Double = 50 { didSet { saveFX() } }      // %
+    @Published var fxPreset = "" { didSet { guard !isDemo else { return }; d.set(fxPreset, forKey: "fx.preset") } }
+    private var applyingPreset = false
+
+    private func saveFX() {
+        guard !isDemo else { return }
+        for (k, v) in [("fx.pitch", fxPitch), ("fx.reverb", fxReverb), ("fx.room", fxRoom), ("fx.harmony", fxHarmony),
+                       ("fx.width", fxWidth), ("fx.warmth", fxWarmth)] { d.set(v, forKey: k) }
+        if !applyingPreset { fxPreset = "" }
+        syncEngine()
+    }
+
+    struct FXPreset { let name: String; let symbol: String; let pitch, reverb, room, harmony, width, warmth: Double }
+    static let fxPresets: [FXPreset] = [
+        FXPreset(name: "Slowed + Reverb", symbol: "tortoise.fill", pitch: -3, reverb: 40, room: 85, harmony: 0, width: 120, warmth: 70),
+        FXPreset(name: "Sped Up", symbol: "hare.fill", pitch: 3, reverb: 0, room: 50, harmony: 0, width: 110, warmth: 30),
+        FXPreset(name: "Ambience", symbol: "building.columns.fill", pitch: 0, reverb: 28, room: 60, harmony: 0, width: 135, warmth: 50),
+        FXPreset(name: "Harmony", symbol: "music.note.list", pitch: 0, reverb: 18, room: 55, harmony: 45, width: 120, warmth: 45),
+        FXPreset(name: "Dreamy", symbol: "cloud.moon.fill", pitch: -2, reverb: 55, room: 92, harmony: 22, width: 140, warmth: 75),
+    ]
+
+    func applyPreset(_ p: FXPreset) {
+        applyingPreset = true
+        fxPitch = p.pitch; fxReverb = p.reverb; fxRoom = p.room; fxHarmony = p.harmony; fxWidth = p.width; fxWarmth = p.warmth
+        applyingPreset = false
+        fxPreset = p.name
+        if !fxOn { fxOn = true } else { syncEngine() }
+        log(p.symbol, "Effect: \(p.name)")
+    }
+
     @Published var callExtra: Double = 10 { didSet { guard !isDemo else { return }
         d.set(callExtra, forKey: "call.extra"); syncEngine() } }
     @Published var autoLockMinutes = 0 { didSet { guard !isDemo else { return }
@@ -88,6 +125,14 @@ final class AppState: ObservableObject {
         night = d.bool(forKey: "night.on")
         callVolume = d.object(forKey: "call.volume") as? Double ?? 100
         callExtra = d.object(forKey: "call.extra") as? Double ?? 10
+        fxOn = d.bool(forKey: "fx.on")
+        fxPitch = d.object(forKey: "fx.pitch") as? Double ?? 0
+        fxReverb = d.object(forKey: "fx.reverb") as? Double ?? 0
+        fxRoom = d.object(forKey: "fx.room") as? Double ?? 60
+        fxHarmony = d.object(forKey: "fx.harmony") as? Double ?? 0
+        fxWidth = d.object(forKey: "fx.width") as? Double ?? 100
+        fxWarmth = d.object(forKey: "fx.warmth") as? Double ?? 50
+        fxPreset = d.string(forKey: "fx.preset") ?? ""
         autoLockMinutes = d.integer(forKey: "autolock.minutes")
         autoUnlock = d.bool(forKey: "autounlock.on")
     }
@@ -103,7 +148,7 @@ final class AppState: ObservableObject {
         calls.onChange = { [weak self] in self?.callsChanged() }
 
         engine.decoy.recoverIfNeeded()
-        if micLocked { mic.setOn(true) }
+        if micLocked { mic.setOn(true) } else { mic.clearLeftovers() }
         if hifiOn { hifi.setOn(true) }
         calls.start()
         syncEngine()
@@ -141,9 +186,16 @@ final class AppState: ObservableObject {
         engine.night = night
         engine.callVolumePercent = callVolume
         engine.callBoostDB = callExtra
+        engine.fxOn = fxOn
+        engine.fxSemitones = fxPitch
+        engine.fxReverb = fxReverb
+        engine.fxRoom = fxRoom
+        engine.fxHarmony = fxHarmony
+        engine.fxWidth = fxWidth
+        engine.fxWarmth = fxWarmth
         engine.mediaFade = mediaFaded ? 0 : 1
         engine.stopDucking = stopDucking
-        engine.setOn(stopDucking || boostOn || night || sleepActive)
+        engine.setOn(stopDucking || boostOn || night || sleepActive || fxOn)
         changed()
     }
 
@@ -267,6 +319,7 @@ final class AppState: ObservableObject {
         let s = AppState(demo: true)
         s.micLocked = true; s.stopDucking = true; s.hifiOn = true; s.boostOn = true
         s.gain = 180; s.bass = 6; s.night = true; s.callVolume = 100
+        s.fxOn = true; s.fxPitch = -3; s.fxReverb = 40; s.fxRoom = 85; s.fxHarmony = 0; s.fxWidth = 120; s.fxPreset = "Slowed + Reverb"
         s.autoLockMinutes = 20; s.autoUnlock = true
         s.sleepMinutes = 30; s.sleepEndsAt = Date().addingTimeInterval(23 * 60 + 41)
         s.callApps = ["WhatsApp"]; s.callStart = Date().addingTimeInterval(-(2 * 3600 + 17 * 60 + 5))

@@ -106,6 +106,7 @@ enum CA {
     // MARK: processes
 
     static func pid(of p: AudioObjectID) -> pid_t { get(p, addr(kAudioProcessPropertyPID), pid_t(0)) ?? 0 }
+    static func isRunningOutput(_ p: AudioObjectID) -> Bool { (get(p, addr(kAudioProcessPropertyIsRunningOutput), UInt32(0)) ?? 0) != 0 }
     static func isRunningInput(_ p: AudioObjectID) -> Bool { (get(p, addr(kAudioProcessPropertyIsRunningInput), UInt32(0)) ?? 0) != 0 }
     static func outputDevices(of p: AudioObjectID) -> [AudioObjectID] {
         ids(p, addr(kAudioProcessPropertyDevices, kAudioObjectPropertyScopeOutput))

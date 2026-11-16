@@ -125,6 +125,16 @@ final class MicLock {
         onChange?()
     }
 
+    /// If CallGuard quit without unlocking (crash, force quit), un-mute the mics it had muted.
+    func clearLeftovers() {
+        guard !isOn else { return }
+        for uid in d.stringArray(forKey: mutedByUsKey) ?? [] {
+            guard let dev = CA.device(uid: uid) else { continue }
+            for el in CA.inputMuteElements(dev) { CA.setInputMuted(dev, el, false) }
+        }
+        d.removeObject(forKey: mutedByUsKey)
+    }
+
     /// Re-apply after a relaunch (e.g. the app was restarted while the lock was on).
     func restore(wasOn: Bool) { if wasOn { setOn(true) } }
 }
