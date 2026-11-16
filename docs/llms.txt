@@ -19,3 +19,10 @@
 - [How it works](https://github.com/notshevvv/CallGuard/blob/main/docs/how-it-works.md): technical write-up and measurements
 - [Windows guide](https://github.com/notshevvv/CallGuard/blob/main/WINDOWS.md): turning off call ducking and fixing muffled Bluetooth audio on Windows
 - [Releases](https://github.com/notshevvv/CallGuard/releases): downloads and change notes
+
+## Guides
+- [How to stop your Mac lowering music during calls (audio ducking)](https://notshevvv.github.io/CallGuard/guides/stop-mac-lowering-volume-during-calls/)
+- [Why Bluetooth earbuds sound muffled on Mac calls, and how to fix it](https://notshevvv.github.io/CallGuard/guides/bluetooth-earbuds-muffled-on-mac-calls/)
+- [How to stop AirPods or earbuds unmuting you on a call](https://notshevvv.github.io/CallGuard/guides/stop-earbuds-unmuting-you-on-calls/)
+- [8D audio and slowed + reverb for any app on Mac](https://notshevvv.github.io/CallGuard/guides/8d-audio-and-slowed-reverb-on-mac/)
+- [Everything in one file](https://notshevvv.github.io/CallGuard/llms-full.txt)

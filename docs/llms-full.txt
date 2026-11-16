@@ -1,0 +1,571 @@
+# CallGuard
+
+> CallGuard is a free, open-source (MIT) macOS menu bar app for people who stay on calls for hours. It stops macOS lowering ("ducking") music and video volume during calls, locks the microphone at the hardware level so earbud taps can't unmute you, keeps Bluetooth earbuds out of muffled 16 kHz headset mode, and adds Studio Master bass, 8D audio and slowed + reverb effects to all Mac audio. macOS 14.4 or later, Apple silicon and Intel. No drivers, no analytics, nothing recorded. Version 3.3, updated 16 November 2026.
+
+## Key facts
+- Price: free (MIT license). Download: https://github.com/notshevvv/CallGuard/releases/latest
+- Platforms: macOS 14.4+ only. No iPhone version (iOS doesn't let apps mute other apps' mics or process other apps' audio). Windows users: see the Windows guide below.
+- No Ducking: during a call, the call app is moved to the Mac's hardware-muted built-in speakers (a decoy, where the ducking lands); all audio is captured with Core Audio process taps before ducking and played to the earbuds. Needs earbuds or headphones. Verified with WhatsApp for Mac; other call apps untested.
+- Mic Lock: sets the input mute property on every microphone (apps receive digital silence) and re-mutes within milliseconds if anything unmutes it. One-click unmute from the menu bar; hold Ctrl+Option+T to talk, Ctrl+Option+M toggles the lock.
+- Hi-Fi Buds: switches the system input to the Mac's built-in mic, so Bluetooth earbuds stay in stereo A2DP mode on calls.
+- Studio Master: rumble cut, de-mud dip at 320 Hz, mono bass under 120 Hz, harmonic (missing-fundamental) bass, presence and an 11 kHz air shelf, harmonics-only exciter.
+- Effects: Slowed + Reverb, Sped Up, Ambience, Harmony and Dreamy presets; pitch shift (timing stays in sync), Freeverb reverb, octave harmony, stereo width.
+- 8D Audio: rotation with equal-power panning, up to 0.6 ms interaural delay, head shadow and rear cues; manual on/off switch and speed.
+- Also: volume to 300%, bass to +12 dB, limiter at −1 dBFS, Night Mode compressor, sleep timer that fades media but keeps the call voice, auto-lock when idle on a call.
+- Effects never change the call voice.
+
+## Docs
+- [README](https://github.com/notshevvv/CallGuard/blob/main/README.md): features, install, FAQ
+- [How it works](https://github.com/notshevvv/CallGuard/blob/main/docs/how-it-works.md): technical write-up and measurements
+- [Windows guide](https://github.com/notshevvv/CallGuard/blob/main/WINDOWS.md): turning off call ducking and fixing muffled Bluetooth audio on Windows
+- [Releases](https://github.com/notshevvv/CallGuard/releases): downloads and change notes
+
+## Guides
+- [How to stop your Mac lowering music during calls (audio ducking)](https://notshevvv.github.io/CallGuard/guides/stop-mac-lowering-volume-during-calls/)
+- [Why Bluetooth earbuds sound muffled on Mac calls, and how to fix it](https://notshevvv.github.io/CallGuard/guides/bluetooth-earbuds-muffled-on-mac-calls/)
+- [How to stop AirPods or earbuds unmuting you on a call](https://notshevvv.github.io/CallGuard/guides/stop-earbuds-unmuting-you-on-calls/)
+- [8D audio and slowed + reverb for any app on Mac](https://notshevvv.github.io/CallGuard/guides/8d-audio-and-slowed-reverb-on-mac/)
+- [Everything in one file](https://notshevvv.github.io/CallGuard/llms-full.txt)
+
+
+# README
+
+<p align="center">
+  <img src="assets/banner.png" alt="CallGuard: the all-night call companion for Mac" width="100%">
+</p>
+
+<p align="center">
+  <img alt="macOS 14.4+" src="https://img.shields.io/badge/macOS-14.4%2B-000000?logo=apple&logoColor=white">
+  <img alt="Apple silicon and Intel" src="https://img.shields.io/badge/Apple%20silicon%20%2B%20Intel-universal-5B3BFF">
+  <img alt="Swift 6" src="https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white">
+  <img alt="No drivers" src="https://img.shields.io/badge/drivers-none-2EA44F">
+  <img alt="MIT License" src="https://img.shields.io/badge/license-MIT-3FA8FF">
+</p>
+
+<h3 align="center">Fall asleep on a call. Wake up with your mic still muted and your music still loud.</h3>
+
+**CallGuard is a free, open-source macOS menu bar app that stops your Mac lowering music and video volume during
+calls, locks your microphone so nobody can hear you, keeps Bluetooth earbuds out of muffled call mode, and adds
+studio-quality bass, 8D audio and slowed + reverb effects to any app.** It works with WhatsApp, and is built on
+Apple's public Core Audio APIs with no drivers. Runs on macOS 14.4 or later (Apple silicon and Intel).
+
+<sub>Latest version: 3.3 · last updated 16 November 2026</sub>
+
+<p align="center">
+  CallGuard is a free menu bar app for people who stay on calls for hours (long-distance couples, study calls,
+  late-night gaming, all-night "sleep calls"). It fixes the three things macOS gets wrong on long calls,
+  then adds the tools you wish you had at 2 a.m.
+</p>
+
+---
+
+## The three problems
+
+| What happens | Why | What CallGuard does |
+|---|---|---|
+| 🎧 You roll over, your earbud registers a tap, and **you're unmuted** on the call. | The earbud tap toggles the call app's own mute button. | **Mic Lock** mutes the microphone at the hardware level. Whatever the app's button says, it gets digital silence. Anything that un-mutes the mic is reversed within milliseconds. |
+| 🔉 The moment a call starts, **YouTube and Spotify drop to a whisper.** | The call engine macOS gives call apps "ducks" all other sound on the device it plays to. Only the call app can change how much; there is no switch for you. | **No Ducking** moves the call app to a silent decoy device, where the ducking happens harmlessly, and plays everything to your earbuds from a copy taken before ducking. |
+| 🫥 Your music suddenly sounds **muffled, like a phone line.** | When a call app uses the earbud mic, Bluetooth drops the earbuds into a low-quality headset mode (16 kHz, mono). | **Hi-Fi Buds** makes calls use the Mac's microphone, so your earbuds stay in stereo hi-fi. |
+
+## Everything in one glass panel
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/panel-dark.png">
+    <img src="assets/panel-light.png" width="430" alt="CallGuard's Liquid Glass panel with Mic Lock, No Ducking and Hi-Fi Buds tiles, sound boost sliders, sleep options and an activity log">
+  </picture>
+</p>
+
+### Features
+
+**For the call**
+- **Mic Lock**: hardware-level mute for every microphone, including ones that connect later (AirPods, USB headsets). A red **LOCKED** sign sits in the menu bar so you always know.
+- **One-click unmute**: click the red **LOCKED** icon (or the **Unmute me** button) and you're live straight away.
+- **Push-to-talk while locked**: hold **⌃⌥T** to speak, let go and you're muted again. **⌃⌥M** locks and unlocks from anywhere. No Accessibility permission needed.
+- **Blocked-unmute counter**: see how many times an earbud tap or an app tried to un-mute you overnight.
+- **No Ducking**: media stays at full volume during calls (details in [How it works](#how-it-works)).
+- **Call voice volume**: turn the other person up or down without touching your music.
+- **Hi-Fi Buds**: stops Bluetooth earbuds from dropping into muffled headset mode.
+
+**For falling asleep**
+- **Sleep timer**: music and videos fade out gently after 15 min to 2 h, **and the call voice stays**.
+- **Lock mic when I go quiet**: if you stop touching the keyboard and trackpad for 5–60 minutes during a call, CallGuard locks your mic for you.
+- **Unlock when the call ends**, so your mic isn't left muted the next day.
+- **Night Mode**: evens out sudden loud bits (ads, explosions, a laugh track) so they don't wake you.
+
+**For your ears**
+- **Studio Master** ✨: a mastering-style "premium sound" switch with one Intensity control. Harmonic bass lets small
+  earbuds and laptop speakers *sound* deep (your ear fills in the low note), the bass is tightened and centred, boxiness
+  is dipped, and vocals get presence and the highs get air.
+- **Effects** with one-tap presets: **Slowed + Reverb**, **Sped Up**, **Ambience**, **Harmony** and **Dreamy**, plus
+  sliders for pitch, reverb, room size, harmony and stereo width.
+- **8D Audio** 🎧: the music slowly circles your head (front, right, behind, left), with its own on/off switch and speed.
+- **Volume boost to 300%** and **bass boost to +12 dB** for all Mac audio, with a limiter that never lets it clip.
+- All of it applies to **music and videos only**. The other person's voice on a call is never changed.
+- **Live level meters**, a **call timer** and an **activity log** of everything CallGuard did.
+
+**Under the hood**
+- Native SwiftUI with **Liquid Glass** on macOS 26 and later (and a matching material look on macOS 14–15). Light and dark mode.
+- **No drivers, no kernel extensions, no virtual audio cable.** Built on Apple's public Core Audio process-tap API.
+- **0.0% CPU when idle**, about 0.6% of one core while processing audio. Universal binary.
+- **Private**: no network access, no analytics, nothing recorded or saved.
+
+## How it works
+
+```mermaid
+flowchart LR
+    subgraph apps[Your apps]
+        apps1["YouTube · Spotify · games"]
+        voice["WhatsApp call"]
+    end
+    decoy[("Mac speakers<br/>(hardware-muted decoy:<br/>ducking happens here)")]
+    engine["CallGuard engine<br/>volume · bass · Night Mode<br/>sleep fade · call volume · limiter"]
+    buds["🎧 Your earbuds"]
+    apps1 -- "process tap<br/>(before ducking)" --> engine
+    voice -- "plays to" --> decoy
+    voice -. "process tap<br/>(before the mute)" .-> engine
+    engine --> buds
+```
+
+1. When a call starts, CallGuard points the system output (and with it the call app) at the Mac's built-in speakers, which it **mutes at the hardware level**. The call app's ducking now lands on a device nobody is listening to.
+2. **Core Audio process taps** collect every app's sound *before* it is ducked or muted, in two separate streams: media and call voice.
+3. CallGuard mixes them, applies your settings, and plays the result on your earbuds through a **private aggregate device**.
+4. Your **volume keys keep working**: CallGuard copies them to your earbuds. When the call ends, everything goes back exactly as it was.
+5. If a call app refuses to move, CallGuard puts things back within 4 seconds and makes up for the ducking with extra gain instead.
+
+**Measured on a MacBook Air (Apple silicon, macOS 27)**
+
+| Check | Result |
+|---|---|
+| Mic Lock: what an app records while locked | exact digital silence (0 non-zero samples) |
+| Input volume 0 instead of mute (what most "mute" apps do) | still −64 dBFS of room sound, which is why CallGuard uses hardware mute |
+| An outside "unmute" while locked | re-muted within milliseconds, and counted |
+| Ducking from the call engine, default vs. minimum setting | 19 dB difference, out of the user's control |
+| No Ducking during a real WhatsApp call | media at full level ("like I'm not on a call") |
+| Volume 200% | +6.0 dB |
+| Bass +12 dB at 50–60 Hz | +11 dB on the low notes, 3 kHz untouched |
+| Limiter: a −6 dBFS signal at 300% | held at −1.0 dBFS, no clipping |
+| Night Mode | a 34 dB loud-to-quiet jump squeezed to 17 dB |
+| Sleep fade | media silent, call voice unchanged |
+| Studio Master harmonic bass (50 Hz note) | adds its 100 Hz overtone 36 dB above the plain signal; the note itself is kept |
+| Studio Master tone shaping | −2.5 dB at 320 Hz, +3.3 dB at 14 kHz, 1 kHz vocals within 0.2 dB |
+| Slowed −3 / Sped up +3 | the note lands exactly 3 semitones lower or higher |
+| 8D Audio | fully right at ¼ turn, centred behind at ½, fully left at ¾; call voice stays centred |
+| Everything maxed at once (Studio, effects, 8D, 300%, +12 dB bass) | held at −1.0 dBFS, no clipping |
+| CPU | 0.0% idle, ~0.6% of one core while running |
+
+The full write-up, including how to repeat these measurements yourself, is in [docs/how-it-works.md](docs/how-it-works.md).
+
+## Install
+
+**Download:** grab `CallGuard.zip` from [Releases](../../releases/latest), unzip it and drag **CallGuard** into **Applications**.
+
+CallGuard isn't notarized by Apple yet, so the first launch needs one extra step:
+1. Double-click CallGuard, then close the warning.
+2. Open **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to CallGuard.
+
+**Build from source** (needs Xcode 26 or later):
+
+```bash
+git clone https://github.com/notshevvv/CallGuard.git
+```
+
+```bash
+cd CallGuard && ./build.sh && open dist/CallGuard.app
+```
+
+### Permissions
+
+| Permission | When | Why |
+|---|---|---|
+| **Screen & System Audio Recording** (system audio only) | The first time No Ducking, the boost or the sleep timer runs | To take each app's sound before macOS ducks it. Nothing is recorded or stored. |
+| None for Mic Lock | | Muting a device needs no permission. |
+| None for the shortcuts | | Carbon hot keys don't need Accessibility access. |
+
+Tick **Start at login** in the panel so CallGuard is always there when a call starts.
+
+## Using it
+
+| Control | What it does |
+|---|---|
+| Click the menu bar mic | Opens the panel. Click anywhere else or press Esc to close it. |
+| Click the red **LOCKED** icon | **Unmutes you instantly** (right-click still opens the panel). |
+| **Mic Lock** tile or **⌃⌥M** | Lock or unlock every microphone. |
+| Hold **⌃⌥T** | Talk while locked (the icon turns green and says **LIVE**). |
+| **No Ducking** tile | Keep media at full volume during calls (needs earbuds or headphones). |
+| **Hi-Fi Buds** tile | Keep Bluetooth earbuds in stereo by using the Mac's mic for calls. |
+| Studio Master | Premium sound. Intensity: Subtle, Rich or Max. |
+| Sound boost | Volume, bass, call voice volume, Night Mode and live meters. |
+| Effects | Tap a preset, then fine-tune pitch, reverb, room, harmony and width. |
+| 8D Audio | Switch on, pick a speed, wear earphones. |
+| Falling asleep on a call | Sleep timer, auto-lock when you go quiet, unlock when the call ends. |
+| Quit | Gives every mic back and restores your audio setup. |
+
+## Questions people ask
+
+### How do I stop my Mac lowering the volume of music and videos during calls?
+macOS turns other audio down ("ducks" it) whenever a call app runs its voice processing, and there is no setting
+to switch it off. CallGuard's **No Ducking** fixes it: during a call it points the call app at the Mac's speakers,
+muted in hardware, and plays everything to your earbuds from a copy taken before the volume drop.
+
+### Why does my music sound muffled on calls with Bluetooth earbuds or AirPods on a Mac?
+When a call app uses the earbuds' microphone, Bluetooth switches them into headset mode, which is 16 kHz mono and
+sounds like an old phone line. CallGuard's **Hi-Fi Buds** makes calls use the Mac's built-in mic instead, so the
+earbuds stay in stereo (44.1–48 kHz) high quality.
+
+### How do I stop my earbuds or AirPods unmuting me on a WhatsApp call?
+Tapping an earbud can toggle the call app's mute button, for example while you sleep. CallGuard's **Mic Lock**
+mutes every microphone at the hardware level, so apps receive digital silence whatever their own button says. It
+re-mutes within milliseconds if anything unmutes it. Click the red LOCKED icon to talk again.
+
+### Can a Mac app block the microphone for just one app?
+No. macOS doesn't let one app block another app's microphone without resetting privacy permissions. Mic Lock
+mutes the microphones themselves, so while it's on no app can hear you. Push-to-talk (hold ⌃⌥T) and the one-click
+unmute let you speak when you need to.
+
+### How do I get 8D audio on a Mac for any song?
+Turn on CallGuard's **8D Audio** and wear earphones. It makes any app's sound, such as Spotify, YouTube or Apple
+Music, circle your head, using equal-power panning, a small delay between the ears and head-shadow filtering.
+A Speed slider sets one turn every 5–18 seconds.
+
+### How do I play Spotify or YouTube slowed + reverb on a Mac?
+Choose the **Slowed + Reverb** preset in CallGuard's Effects. It lowers the pitch by 3 semitones and adds a
+large reverb to all system audio live. Live audio can't play slower without falling behind, so the timing stays
+in sync with the video while it sounds slowed.
+
+### Is there a free bass booster and volume booster for Mac?
+Yes. CallGuard boosts all Mac audio up to 300% and bass up to +12 dB, with a limiter that holds peaks at −1 dBFS
+so it never clips. **Studio Master** adds harmonic bass, so small earbuds and laptop speakers can *sound* deep,
+plus clearer vocals and airy highs. It's free under the MIT license.
+
+### Which call apps work with No Ducking?
+Verified with **WhatsApp** for Mac. It should work with any app that follows the system output device
+(FaceTime, Zoom, Teams, Google Meet in a browser, Discord, Telegram…), but these haven't been tested yet. If an
+app doesn't move, CallGuard falls back to extra gain automatically. Please
+[report what you find](../../issues/new?template=call-app-report.md).
+
+### Why does my Sound menu say "MacBook Speakers" during a call?
+That's the decoy. The speakers are hardware-muted and your audio is on your earbuds. Volume keys still control the
+earbuds, and the output switches back on its own when the call ends.
+
+### Does No Ducking work on the Mac's own speakers?
+No, because the speakers *are* the decoy. Use earbuds, headphones or another output. On the speakers, CallGuard
+uses the extra-gain fallback instead.
+
+### What happens if CallGuard crashes during a call?
+The decoy speakers stay muted, so you get silence rather than a loud laptop in the night. Reopen CallGuard and it
+restores everything. Since 3.1 it also only uses the decoy after it has heard real audio, and a silence guard hands
+the call back to your earbuds if capture ever stops.
+
+### Does CallGuard record my audio or send data anywhere?
+No. CallGuard has no network code and no analytics. Audio stays in memory for a few milliseconds while it is
+processed, then goes straight to your output. Nothing is recorded or saved.
+
+### Is there an iPhone or Windows version?
+No iPhone version: iOS doesn't let apps mute other apps' mics or process other apps' sound. On Windows, most of
+this is built in. See **[WINDOWS.md](WINDOWS.md)**, which includes one-click registry files to turn call ducking off.
+
+## On Windows?
+
+CallGuard is Mac-only, but Windows can do most of this with built-in settings: see **[WINDOWS.md](WINDOWS.md)**, which includes one-click registry files to turn call ducking off.
+
+## Similar projects
+
+- [Unduck Pro](https://github.com/MrRockySL/Unduck-Pro): keeps media loud on calls, with a per-app volume mixer.
+- [Background Music](https://github.com/kyleneideck/BackgroundMusic): per-app volume and auto-pause (uses a virtual driver).
+- [eqMac](https://github.com/bitgapp/eqMac): system-wide equalizer.
+
+CallGuard focuses on long calls: the mic safety, sleep and earbud features above.
+
+## Contributing
+
+Bug reports, call-app test results and pull requests are welcome. The code is small and commented:
+
+| File | What's in it |
+|---|---|
+| `Engine.swift` | Process taps, aggregate device, the real-time DSP (two buses, bass, Night Mode, fade, limiter) |
+| `Decoy.swift` | The No Ducking decoy: muted speakers, volume-key mirroring, crash recovery |
+| `StudioMaster.swift` | The premium-sound chain (harmonic bass, mono low end, de-mud, presence, air, exciter) |
+| `Effects.swift` | Pitch shifter, Freeverb reverb, harmony layer, stereo width |
+| `EightD.swift` | 8D rotation: equal-power panning, interaural delay, head shadow, rear cues |
+| `MicLock.swift` | Hardware mute, re-mute listeners, push-to-talk, Hi-Fi Buds |
+| `CallMonitor.swift` | Call detection, idle time, global shortcuts |
+| `PanelView.swift`, `StatusController.swift` | The Liquid Glass panel and menu bar icon |
+| `SelfTest.swift` | `--selftest-dsp` offline checks and the live test harness |
+
+Run the offline checks with `.build/release/CallGuard --selftest-dsp`. The `tools/` folder has small command-line tools for measuring audio devices.
+
+## License
+
+[MIT](LICENSE). Free to use, change and share.
+
+
+# How CallGuard works
+
+# How CallGuard works
+
+This page explains what CallGuard changes on your Mac, why, and how each claim in the README was measured.
+Everything uses public Apple APIs. There are no drivers or kernel extensions.
+
+## Mic Lock
+
+**What it does:** sets `kAudioDevicePropertyMute` (input scope) on every input device and keeps it set.
+
+**Why mute and not volume:** we recorded the built-in mic in three states:
+
+| State | What an app receives |
+|---|---|
+| Normal | room sound, about −57 dBFS |
+| Input volume 0 | still about −64 dBFS: you can still be heard |
+| Hardware mute | exact digital zeros (0 non-zero samples out of 48,000) |
+
+**Keeping it locked:** CallGuard listens for mute changes on each device, for devices being added (AirPods
+connecting), and for the default input changing. It also re-checks every 3 seconds. When something un-mutes a
+locked mic (an earbud tap handled by the call app, or the app's own button), CallGuard mutes it again within
+milliseconds and logs it. If the default input is a mic that can't be muted (for example an iPhone Continuity mic),
+it switches the default to one that can.
+
+**Push-to-talk** (⌃⌥T) and the lock shortcut (⌃⌥M) are Carbon hot keys (`RegisterEventHotKey`), which work in
+the background without Accessibility permission. While the key is held, the mics CallGuard muted are opened.
+When you let go, they are muted again.
+
+**Auto-lock when you go quiet** reads the time since your last keyboard or trackpad input
+(`CGEventSource.secondsSinceLastEventType`), which needs no permission, and only while an app is using a mic.
+
+## Why media gets quieter on calls (ducking)
+
+Call apps use Apple's voice-processing audio unit for echo cancellation. While it runs, it lowers ("ducks")
+all other audio on its output device. The amount is a property of that audio unit
+(`kAUVoiceIOProperty_OtherAudioDuckingConfiguration`), so **only the call app can change it.**
+
+We measured this with our own voice-processing unit (`tools/vpio.swift`) and a test tone:
+
+| Ducking level set by the call app | Tone heard by the mic |
+|---|---|
+| minimum | −70.5 dB |
+| default | −89.5 dB |
+| mid | −105.7 dB |
+
+Re-playing the sound through another app doesn't escape it: audio played by CallGuard on the *same* device was
+ducked by exactly the same amount (−89.3 vs −89.5 dB).
+
+## No Ducking: the decoy
+
+The ducking applies to the device the call app plays to. So during a call CallGuard:
+
+1. saves the built-in speakers' mute and volume, **mutes them in hardware**, and makes them the system output;
+2. lets the call app follow the system output onto the muted speakers, where its ducking now lands;
+3. captures every app's audio with **process taps** (`CATapDescription`, macOS 14.2+): one tap for media and one
+   for the call voice. Taps hand over the sound *before* the device's ducking and mute (verified: a tap on a
+   process playing to the muted speakers still reads −40.0 dBFS);
+4. plays the mix on your earbuds through a **private aggregate device** (your earbuds plus both taps, with
+   drift correction);
+5. copies volume-key changes from the decoy to your earbuds, and turns the mute key into an earbud mute.
+
+When the call ends (no app is using a mic), or you quit, the output goes back to your earbuds and the speakers
+get their old volume and mute back. The saved state is written to disk first, so after a crash the next launch
+restores it. Until then the speakers stay muted, so a crash means silence, not noise.
+
+If the call app is still playing to your earbuds 4 seconds after the switch (it ignored the system output),
+CallGuard undoes the switch and adds extra gain to media instead. Measured: +10 dB of extra gain gave +10.7 dB
+at the ear while ducked.
+
+## Hi-Fi Buds
+
+Bluetooth earbuds have two modes: stereo music (A2DP) and a headset mode with a microphone (HFP). Headset mode is
+16 kHz mono, which is what sounds muffled. It switches on whenever any app records from the earbud mic. With
+Hi-Fi Buds on, CallGuard moves the system input to the Mac's built-in mic whenever a Bluetooth mic becomes the
+default. Tested during a live WhatsApp call: WhatsApp followed the change and the earbuds went from 16 kHz to
+44.1 kHz stereo.
+
+## The audio engine
+
+`Engine.swift` runs one I/O callback on the aggregate device. Per sample it applies:
+
+1. **Media bus:** a low-shelf bass filter (RBJ, 110 Hz), Night Mode (compressor: −28 dBFS threshold, 5:1,
+   +9 dB make-up, 5 ms attack, 250 ms release), volume, and the sleep-timer fade (8 s time constant).
+2. **Call bus:** its own volume. Bass and Night Mode don't touch it.
+3. **Limiter** on the sum: instant attack, 150 ms release, stereo-linked, ceiling −1 dBFS. Because the envelope
+   is never below the current peak, the output can't exceed the ceiling.
+
+The callback doesn't allocate or lock anything. Parameters are smoothed (30 ms) so slider moves don't click.
+When nothing needs it, the engine isn't running at all: 0.0% CPU. While running it uses about 0.6% of one
+Apple silicon core.
+
+`--selftest-dsp` checks the DSP offline with synthetic signals:
+
+```
+PASS  volume 200% (+6 dB)                           got  -34.0 dB, want  -34.0
+PASS  bass +12 dB at 50 Hz                          got  -28.6 dB, want  -28.5
+PASS  bass leaves 3 kHz alone                       got  -40.0 dB, want  -40.0
+PASS  limiter holds −1 dBFS (−6 dBFS × 300%)        got   -1.0 dB, want   -1.0
+PASS  Night Mode squeezes loud vs quiet             loud−quiet spread 16.8 dB (input 34 dB)
+PASS  sleep fade: media silent, call kept           got  -25.8 dB, want  -26.0
+PASS  call voice 150% (+3.5 dB), media muted        got  -22.5 dB, want  -22.5
+PASS  bass/volume don't touch the call bus          got  -26.0 dB, want  -26.0
+ALL DSP CHECKS PASSED
+```
+
+## Repeating the measurements
+
+The tools in [`tools/`](../tools) are single-file Swift programs. Build one with `swiftc -O tools/meter.swift -o tools/meter`.
+
+| Tool | Use |
+|---|---|
+| `probe` | list audio devices (mute/volume support, sample rate) and which apps are using audio |
+| `procdev` | which device each app is playing to and recording from |
+| `meter <uid> <seconds> [Hz]` | record from an input; print peak/RMS and the level of one frequency |
+| `tone <uid> <Hz> <dBFS> <seconds>` | play a sine directly on one output device |
+| `vpio <inUID> <outUID> <seconds> [level]` | run a voice-processing unit like a call app (causes ducking) |
+| `inset` / `outset` | set input mute/volume, or output mute, on one device |
+| `svg2png` | render the logo and banner |
+
+Live engine test without touching the rest of the system (tap only two test tones, play on one device):
+
+```
+CallGuard --selftest-engine <mediaPid> <callPid> BuiltInSpeakerDevice 200 0 4
+```
+
+
+# Guide: How to stop your Mac lowering music during calls
+URL: https://notshevvv.github.io/CallGuard/guides/stop-mac-lowering-volume-during-calls/
+
+macOS lowers other audio during calls because the call app runs Apple's voice processing, which "ducks" every other sound on the same output. There is no switch for it in System Settings. The free app CallGuard keeps media at full volume by moving the call to a muted device, where the ducking lands harmlessly, and playing everything to your earbuds.
+
+## Why your music gets quieter when a call starts
+
+Call apps such as WhatsApp use Apple's voice-processing audio unit to cancel echo. While it runs, it lowers ("ducks") all other audio playing on the same output device. How much it lowers is a setting inside that audio unit, and only the call app can change it. In our tests, the difference between the call engine's minimum and default ducking was 19 dB, enough to turn a song into background noise.
+That's why searching System Settings doesn't help: the setting isn't yours to change. Re-playing the sound through another app doesn't escape it either. Audio played by a second app on the same device was ducked by exactly the same amount.
+
+## Fix it with CallGuard (free)
+
+- Download CallGuard, unzip it, and drag it into Applications. On first launch, go to System Settings → Privacy & Security → Open Anyway.
+- Click the mic icon in the menu bar and turn on No Ducking.
+- Allow "System Audio Recording" when macOS asks. CallGuard uses it to take each app's sound before it is ducked. Nothing is recorded or saved.
+
+During a call, CallGuard points the call app at the Mac's built-in speakers, muted in hardware, so the ducking lands on a device nobody is listening to. It then plays everything (your music and the other person's voice) to your earbuds from a copy taken before the drop. Your volume keys keep working, and everything switches back when the call ends.
+
+## Good to know
+
+- It needs earbuds or headphones, because the Mac's own speakers are the decoy.
+- Verified with WhatsApp for Mac. It should work with any app that follows the system output (FaceTime, Zoom, Teams, Meet), but these are untested. If an app doesn't switch, CallGuard falls back to boosting your media instead.
+- The other person never hears your music: CallGuard only changes what you hear.
+
+On Windows? It has a built-in switch: see the Windows guide.
+
+## Quick answers
+
+Q: Is there a setting in macOS to stop ducking during calls?
+A: No. The amount of ducking is set by the call app's own voice processing, and macOS has no user setting for it.
+
+Q: Will the other person hear my music?
+A: No. CallGuard only changes what you hear. Your microphone isn't mixed with your media.
+
+Q: Does No Ducking work on the MacBook speakers?
+A: No. The built-in speakers are used as the muted decoy, so No Ducking needs earbuds, headphones or another output.
+
+
+# Guide: Why Bluetooth earbuds sound muffled on Mac calls, and how to fix it
+URL: https://notshevvv.github.io/CallGuard/guides/bluetooth-earbuds-muffled-on-mac-calls/
+
+Earbuds sound muffled on calls because using their microphone switches Bluetooth into headset mode, which carries sound at low quality (16 kHz, mono) in both directions. To keep stereo hi-fi, make the Mac's built-in microphone the input for calls. CallGuard's Hi-Fi Buds does that automatically.
+
+## What's happening
+
+Most Bluetooth earbuds have two modes. Music mode (A2DP) plays rich stereo sound, but only in one direction. Headset mode (HFP) also carries the earbud microphone, so it squeezes everything into a narrow channel. On the earbuds we tested, that meant 16 kHz, mono. The moment any app records from the earbud mic, the earbuds switch to headset mode, and your music and videos start sounding like an old phone line.
+
+## Fix it by hand
+
+- Before the call, open System Settings → Sound → Input and choose the Mac's own microphone (for example "MacBook Air Microphone").
+- In your call app's audio settings, choose the same microphone if it lets you.
+- Keep the earbuds as the output. They stay in stereo, because nothing is using their mic.
+
+The trade-off: the other person hears you through the Mac's microphone, so speak towards the laptop.
+
+## Make it automatic with CallGuard
+
+Turn on Hi-Fi Buds in CallGuard. Whenever a Bluetooth mic becomes the input, it switches the input back to the Mac's built-in mic. In a live WhatsApp test, WhatsApp followed the change mid-call and the earbuds went from 16 kHz to 44.1 kHz stereo.
+If you fall asleep on calls, pair it with Mic Lock, so nobody hears you whichever mic is in use.
+
+## Quick answers
+
+Q: Why does Spotify sound bad when I'm on a call with earbuds?
+A: Because the earbuds have switched to Bluetooth headset mode to use their microphone, which is low-quality mono. Using the Mac's microphone instead keeps them in stereo.
+
+Q: Can I use the earbud mic and still have hi-fi sound?
+A: Not with ordinary Bluetooth headset mode: using the earbud mic is what lowers the quality.
+
+Q: Will the other person hear me worse with the Mac mic?
+A: They hear the laptop's microphone instead of the earbud one, so sound is best when you're near the Mac.
+
+
+# Guide: How to stop AirPods or earbuds unmuting you on a call
+URL: https://notshevvv.github.io/CallGuard/guides/stop-earbuds-unmuting-you-on-calls/
+
+Earbud taps can toggle the call app's mute button, so an accidental tap (rolling over in your sleep, for example) unmutes you. Change the tap action in your earbuds' settings, and for a guarantee, lock the microphone at the hardware level with CallGuard's Mic Lock. Apps then receive digital silence whatever their own mute button says.
+
+## Why a tap unmutes you
+
+In headset mode, an earbud tap is sent to the call app as a mute or unmute command. The app's own mute button is only a switch inside that app. Anything that flips it, a tap included, puts you back on the call.
+
+## Step 1: change the tap action
+
+For AirPods, open System Settings and click your AirPods while they're connected to see their controls. For other brands, use the earbuds' companion app (for example, the maker's phone app). Set the tap you hit in your sleep to "None" or play/pause.
+
+## Step 2: lock the microphone itself
+
+CallGuard's Mic Lock mutes every microphone at the hardware level, so every app receives digital silence. In testing, a locked mic recorded 0 non-zero samples. Many "mute" tools only set the input volume to zero, which in our test still let sound through at about −64 dBFS. If anything un-mutes a locked mic, CallGuard mutes it again within milliseconds and counts it.
+
+- One click on the red LOCKED menu bar icon unmutes you.
+- Hold Control + Option + T to talk while locked. Control + Option + M locks and unlocks from anywhere.
+- It can lock itself when you go quiet on a call, and unlock when the call ends.
+
+macOS doesn't let one app block another app's microphone, so while Mic Lock is on, no app can hear you. That's what makes it reliable.
+
+## Quick answers
+
+Q: Can a Mac app mute the microphone for only WhatsApp?
+A: No. macOS doesn't allow one app to block another app's microphone without resetting privacy permissions. Mic Lock mutes the microphones themselves, which covers every app.
+
+Q: Is the mic really off when locked?
+A: Yes. A locked mic delivered exact digital silence in testing (0 non-zero samples), and CallGuard re-mutes it if anything unmutes it.
+
+Q: How do I talk again quickly?
+A: Click the red LOCKED icon in the menu bar, or hold Control + Option + T to talk while it stays locked.
+
+
+# Guide: 8D audio and slowed + reverb for any app on Mac
+URL: https://notshevvv.github.io/CallGuard/guides/8d-audio-and-slowed-reverb-on-mac/
+
+To get 8D audio or slowed + reverb for any app on a Mac, use a system-wide audio app. CallGuard is free and works live on Spotify, YouTube, Apple Music or anything else: turn on 8D Audio to make the music circle your head, or pick the Slowed + Reverb preset in Effects.
+
+## What 8D audio actually is
+
+"8D" songs move the music slowly around your head. CallGuard's 8D Audio does it live, using the same cues your brain uses to place a sound. It's louder in the near ear, arrives a fraction of a millisecond later in the far ear (up to 0.6 ms), and sounds duller behind your head. One turn takes 5 to 18 seconds, set with a Speed slider. Use earphones: on speakers it only sounds like panning.
+
+## Slowed + reverb, live
+
+Slowed + reverb edits lower a song's pitch and add a big room around it. Live audio can't actually play slower, because it would fall behind the video. So CallGuard's Slowed + Reverb preset lowers the pitch by 3 semitones and adds reverb, and the timing stays in sync. Other presets: Sped Up (pitch up), Ambience, Harmony (adds a soft octave layer) and Dreamy. You can fine-tune pitch, reverb, room size, harmony and stereo width.
+
+## How to turn it on
+
+- Download CallGuard and open it from the menu bar.
+- For 8D: switch on the 8D Audio card and pick a speed.
+- For slowed + reverb: tap Slowed + Reverb in the Effects card.
+- Allow "System Audio Recording" the first time. Nothing is recorded or saved.
+
+## Make small earbuds sound bigger
+
+Studio Master adds the overtones of each bass note, so earbuds and laptop speakers let you hear deep bass they can't physically play. It also tightens the low end, dips boxiness at 320 Hz and adds air to the highs. A limiter keeps everything below −1 dBFS, so nothing clips.
+On a call, all of these effects change only your music and videos. The other person's voice stays clean and centred.
+
+## Quick answers
+
+Q: Does it work with Spotify and YouTube?
+A: Yes. CallGuard processes all Mac audio, so it works with any app that plays sound: Spotify, YouTube in any browser, Apple Music and more.
+
+Q: Does slowed + reverb change the song's speed?
+A: No, live audio can't be slowed without falling behind. It lowers the pitch and adds reverb, so it sounds slowed while staying in sync.
+
+Q: Will effects change the voice on my call?
+A: No. Effects, 8D and Studio Master apply to music and videos only. The call voice is left untouched.

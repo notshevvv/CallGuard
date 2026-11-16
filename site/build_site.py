@@ -30,7 +30,7 @@ ld = [{
     "operatingSystem": "macOS 14.4 or later", "applicationCategory": "MultimediaApplication", "softwareVersion": "3.3.0",
     "dateModified": "2026-11-16", "license": "https://opensource.org/licenses/MIT", "isAccessibleForFree": True,
     "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
-    "downloadUrl": REL, "url": BASE, "image": BASE + "assets/banner.png", "screenshot": BASE + "assets/panel-dark.png",
+    "downloadUrl": REL, "url": BASE, "image": BASE + "assets/og.jpg", "screenshot": BASE + "assets/panel.webp",
     "codeRepository": "https://github.com/notshevvv/CallGuard",
     "featureList": ["Stop macOS audio ducking during calls", "Hardware microphone lock with push-to-talk",
                     "Keep Bluetooth earbuds in stereo hi-fi on calls", "Studio Master premium sound with harmonic bass",

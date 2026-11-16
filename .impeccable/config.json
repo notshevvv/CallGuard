@@ -65,6 +65,15 @@
         ],
         "createdAt": "2026-11-16T17:22:22.592Z",
         "reason": "assistant: site/template.html is the unbuilt source with {{placeholders}}; the shipped page docs/index.html is checked instead"
+      },
+      {
+        "rule": "radial-halo",
+        "value": "*",
+        "files": [
+          "docs/guides/**"
+        ],
+        "createdAt": "2026-11-16T17:31:31.654Z",
+        "reason": "assistant: the colour field is the committed Liquid Glass world (DESIGN.md)"
       }
     ]
   }

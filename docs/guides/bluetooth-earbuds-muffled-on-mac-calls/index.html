@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why Bluetooth earbuds and AirPods sound muffled on Mac calls (and how to fix it)</title>
+<meta name="description" content="On a call, Bluetooth earbuds switch to a low-quality headset mode (16 kHz mono). Here&#x27;s why, how to keep stereo hi-fi by using the Mac&#x27;s microphone, and how to make it automatic.">
+<link rel="canonical" href="https://notshevvv.github.io/CallGuard/guides/bluetooth-earbuds-muffled-on-mac-calls/">
+<link rel="icon" href="../../assets/icon-256.png"><link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0d0b2e">
+<meta property="og:type" content="article"><meta property="og:site_name" content="CallGuard">
+<meta property="og:title" content="Why Bluetooth earbuds sound muffled on Mac calls, and how to fix it"><meta property="og:description" content="On a call, Bluetooth earbuds switch to a low-quality headset mode (16 kHz mono). Here&#x27;s why, how to keep stereo hi-fi by using the Mac&#x27;s microphone, and how to make it automatic.">
+<meta property="og:url" content="https://notshevvv.github.io/CallGuard/guides/bluetooth-earbuds-muffled-on-mac-calls/"><meta property="og:image" content="https://notshevvv.github.io/CallGuard/assets/og.jpg">
+<meta property="article:modified_time" content="2026-11-16">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://notshevvv.github.io/CallGuard/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Onest:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "Article", "headline": "Why Bluetooth earbuds and AirPods sound muffled on Mac calls (and how to fix it)", "description": "On a call, Bluetooth earbuds switch to a low-quality headset mode (16 kHz mono). Here's why, how to keep stereo hi-fi by using the Mac's microphone, and how to make it automatic.", "datePublished": "2026-11-16", "dateModified": "2026-11-16", "inLanguage": "en", "mainEntityOfPage": "https://notshevvv.github.io/CallGuard/guides/bluetooth-earbuds-muffled-on-mac-calls/", "image": "https://notshevvv.github.io/CallGuard/assets/og.jpg", "author": {"@type": "Person", "name": "notshevvv", "url": "https://github.com/notshevvv"}, "about": {"@type": "SoftwareApplication", "name": "CallGuard", "operatingSystem": "macOS 14.4 or later", "applicationCategory": "MultimediaApplication", "url": "https://notshevvv.github.io/CallGuard/", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Why does Spotify sound bad when I'm on a call with earbuds?", "acceptedAnswer": {"@type": "Answer", "text": "Because the earbuds have switched to Bluetooth headset mode to use their microphone, which is low-quality mono. Using the Mac's microphone instead keeps them in stereo."}}, {"@type": "Question", "name": "Can I use the earbud mic and still have hi-fi sound?", "acceptedAnswer": {"@type": "Answer", "text": "Not with ordinary Bluetooth headset mode: using the earbud mic is what lowers the quality."}}, {"@type": "Question", "name": "Will the other person hear me worse with the Mac mic?", "acceptedAnswer": {"@type": "Answer", "text": "They hear the laptop's microphone instead of the earbud one, so sound is best when you're near the Mac."}}]}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "CallGuard", "item": "https://notshevvv.github.io/CallGuard/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://notshevvv.github.io/CallGuard/guides/"}, {"@type": "ListItem", "position": 3, "name": "Why Bluetooth earbuds sound muffled on Mac calls, and how to fix it", "item": "https://notshevvv.github.io/CallGuard/guides/bluetooth-earbuds-muffled-on-mac-calls/"}]}]</script>
+<style>
+:root{--night:#0d0b2e;--ink:#f6f3ff;--ink-2:#d6cff2;--ink-3:#a39bcf;--edge:rgba(255,255,255,.16);
+--display:"Bricolage Grotesque",-apple-system,sans-serif;--body:"Onest",-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html{background:var(--night)}
+body{margin:0;color:var(--ink);font:400 18px/1.7 var(--body);-webkit-font-smoothing:antialiased;
+background:radial-gradient(60vmax 60vmax at 0% 0%,#3a2bb0 0%,transparent 60%),radial-gradient(55vmax 55vmax at 100% 30%,#9c2f6f 0%,transparent 60%),radial-gradient(50vmax 50vmax at 40% 100%,#5a2bc0 0%,transparent 60%),var(--night);background-attachment:fixed}
+::selection{background:#b061ff;color:#fff}:focus-visible{outline:2px solid #fff;outline-offset:3px;border-radius:8px}
+a{color:#e2d4ff;text-underline-offset:3px}a:hover{color:#fff}
+.wrap{width:min(860px,100% - 32px);margin-inline:auto}
+.glass{border-radius:26px;background:linear-gradient(155deg,rgba(255,255,255,.13),rgba(255,255,255,.04) 60%);-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);border:1px solid var(--edge);box-shadow:0 1px 0 rgba(255,255,255,.3) inset,0 28px 60px -28px rgba(4,2,20,.85)}
+.rail{position:sticky;top:12px;z-index:10;margin-top:12px}
+.rail .glass{display:flex;justify-content:space-between;align-items:center;padding:10px 12px 10px 16px;border-radius:999px;background:linear-gradient(155deg,rgba(44,32,112,.84),rgba(18,14,54,.86))}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font:800 18px/1 var(--display)}
+.brand img{width:28px;height:28px;border-radius:7px}
+.dl{color:#140f36;background:linear-gradient(180deg,#fff,#e9e4ff);padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:600;font-size:15px}
+.dl:hover{color:#140f36}
+nav.crumbs{margin:44px 0 10px;font-size:14px;color:var(--ink-3)}nav.crumbs a{color:var(--ink-2)}
+h1{font:800 clamp(34px,5.4vw,58px)/1.04 var(--display);letter-spacing:-.03em;margin:0 0 14px;text-wrap:balance}
+.meta{color:var(--ink-3);font-size:14.5px;margin:0 0 26px}
+.answer{padding:24px 26px;margin:0 0 34px}
+.answer p{margin:0;font-size:19px;color:var(--ink)}
+article h2{font:700 clamp(24px,3vw,32px)/1.2 var(--display);letter-spacing:-.02em;margin:44px 0 12px}
+article p,article li{color:var(--ink-2)}article strong{color:var(--ink)}
+article ol,article ul{padding-left:22px}article li{margin:6px 0}
+.faq{margin-top:46px}.faq h3{font:700 19px/1.3 var(--display);margin:22px 0 4px;color:var(--ink)}.faq p{margin:0}
+.cta{margin:48px 0 0;padding:28px;text-align:center}
+.cta p{margin:0 0 16px;color:var(--ink-2)}
+.related{margin:40px 0 0}.related ul{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px}
+.related a{display:block;padding:14px 18px;border-radius:16px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);text-decoration:none;color:var(--ink)}
+.related a:hover{background:rgba(255,255,255,.11)}
+footer{margin:60px 0 50px;color:var(--ink-3);font-size:14px;display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:space-between}
+footer a{color:var(--ink-2);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="rail wrap"><div class="glass">
+  <a class="brand" href="../../"><img src="../../assets/icon-128.webp" alt="" width="28" height="28">CallGuard</a>
+  <a class="dl" href="https://github.com/notshevvv/CallGuard/releases/latest">Download for Mac</a>
+</div></div>
+<main class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../">CallGuard</a> / <a href="../">Guides</a></nav>
+<article>
+<h1>Why Bluetooth earbuds sound muffled on Mac calls, and how to fix it</h1>
+<p class="meta">Updated 16 November 2026 · by notshevvv, maker of CallGuard</p>
+<div class="answer glass"><p>Earbuds sound muffled on calls because using their microphone switches Bluetooth into headset mode, which carries sound at low quality (16 kHz, mono) in both directions. To keep stereo hi-fi, make the Mac&#x27;s built-in microphone the input for calls. CallGuard&#x27;s Hi-Fi Buds does that automatically.</p></div>
+
+<h2>What's happening</h2>
+<p>Most Bluetooth earbuds have two modes. <strong>Music mode</strong> (A2DP) plays rich stereo sound, but only in one direction. <strong>Headset mode</strong> (HFP) also carries the earbud microphone, so it squeezes everything into a narrow channel. On the earbuds we tested, that meant <strong>16 kHz, mono</strong>. The moment any app records from the earbud mic, the earbuds switch to headset mode, and your music and videos start sounding like an old phone line.</p>
+
+<h2>Fix it by hand</h2>
+<ol>
+<li>Before the call, open <strong>System Settings → Sound → Input</strong> and choose the Mac's own microphone (for example "MacBook Air Microphone").</li>
+<li>In your call app's audio settings, choose the same microphone if it lets you.</li>
+<li>Keep the earbuds as the output. They stay in stereo, because nothing is using their mic.</li>
+</ol>
+<p>The trade-off: the other person hears you through the Mac's microphone, so speak towards the laptop.</p>
+
+<h2>Make it automatic with CallGuard</h2>
+<p>Turn on <strong>Hi-Fi Buds</strong> in <a href="https://github.com/notshevvv/CallGuard/releases/latest">CallGuard</a>. Whenever a Bluetooth mic becomes the input, it switches the input back to the Mac's built-in mic. In a live WhatsApp test, WhatsApp followed the change mid-call and the earbuds went from 16 kHz to 44.1 kHz stereo.</p>
+<p>If you fall asleep on calls, pair it with <strong>Mic Lock</strong>, so nobody hears you whichever mic is in use.</p>
+
+<section class="faq" aria-labelledby="faqh"><h2 id="faqh">Quick answers</h2><h3>Why does Spotify sound bad when I&#x27;m on a call with earbuds?</h3><p>Because the earbuds have switched to Bluetooth headset mode to use their microphone, which is low-quality mono. Using the Mac&#x27;s microphone instead keeps them in stereo.</p><h3>Can I use the earbud mic and still have hi-fi sound?</h3><p>Not with ordinary Bluetooth headset mode: using the earbud mic is what lowers the quality.</p><h3>Will the other person hear me worse with the Mac mic?</h3><p>They hear the laptop&#x27;s microphone instead of the earbud one, so sound is best when you&#x27;re near the Mac.</p></section>
+</article>
+<div class="cta glass"><p>CallGuard is free and open source. macOS 14.4 or later, Apple silicon and Intel.</p><a class="dl" href="https://github.com/notshevvv/CallGuard/releases/latest">Download CallGuard for Mac</a></div>
+<section class="related" aria-labelledby="relh"><h2 id="relh" style="font:700 22px/1.2 var(--display)">Related guides</h2><ul><li><a href="../stop-mac-lowering-volume-during-calls/">How to stop your Mac lowering music during calls →</a></li><li><a href="../stop-earbuds-unmuting-you-on-calls/">How to stop AirPods or earbuds unmuting you on a call →</a></li></ul></section>
+<footer><span>CallGuard · MIT license</span><span><a href="../../">Home</a> · <a href="https://github.com/notshevvv/CallGuard">GitHub</a> · <a href="../../llms.txt">llms.txt</a></span></footer>
+</main>
+</body>
+</html>

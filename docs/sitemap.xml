@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://notshevvv.github.io/CallGuard/</loc><lastmod>2026-11-16</lastmod></url>
+  <url><loc>https://notshevvv.github.io/CallGuard/guides/</loc><lastmod>2026-11-16</lastmod></url>
+  <url><loc>https://notshevvv.github.io/CallGuard/guides/stop-mac-lowering-volume-during-calls/</loc><lastmod>2026-11-16</lastmod></url>
+  <url><loc>https://notshevvv.github.io/CallGuard/guides/bluetooth-earbuds-muffled-on-mac-calls/</loc><lastmod>2026-11-16</lastmod></url>
+  <url><loc>https://notshevvv.github.io/CallGuard/guides/stop-earbuds-unmuting-you-on-calls/</loc><lastmod>2026-11-16</lastmod></url>
+  <url><loc>https://notshevvv.github.io/CallGuard/guides/8d-audio-and-slowed-reverb-on-mac/</loc><lastmod>2026-11-16</lastmod></url>
   <url><loc>https://notshevvv.github.io/CallGuard/how-it-works</loc><lastmod>2026-11-16</lastmod></url>
   <url><loc>https://notshevvv.github.io/CallGuard/llms.txt</loc><lastmod>2026-11-16</lastmod></url>
+  <url><loc>https://notshevvv.github.io/CallGuard/llms-full.txt</loc><lastmod>2026-11-16</lastmod></url>
 </urlset>

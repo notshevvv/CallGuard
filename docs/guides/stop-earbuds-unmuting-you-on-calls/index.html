@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to stop AirPods or earbuds unmuting you on a WhatsApp call (Mac)</title>
+<meta name="description" content="Earbud taps can toggle a call&#x27;s mute button, often while you sleep. How to stop it: change the tap action, and lock the Mac&#x27;s microphone at the hardware level so nothing can unmute you.">
+<link rel="canonical" href="https://notshevvv.github.io/CallGuard/guides/stop-earbuds-unmuting-you-on-calls/">
+<link rel="icon" href="../../assets/icon-256.png"><link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0d0b2e">
+<meta property="og:type" content="article"><meta property="og:site_name" content="CallGuard">
+<meta property="og:title" content="How to stop AirPods or earbuds unmuting you on a call"><meta property="og:description" content="Earbud taps can toggle a call&#x27;s mute button, often while you sleep. How to stop it: change the tap action, and lock the Mac&#x27;s microphone at the hardware level so nothing can unmute you.">
+<meta property="og:url" content="https://notshevvv.github.io/CallGuard/guides/stop-earbuds-unmuting-you-on-calls/"><meta property="og:image" content="https://notshevvv.github.io/CallGuard/assets/og.jpg">
+<meta property="article:modified_time" content="2026-11-16">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://notshevvv.github.io/CallGuard/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Onest:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "Article", "headline": "How to stop AirPods or earbuds unmuting you on a WhatsApp call (Mac)", "description": "Earbud taps can toggle a call's mute button, often while you sleep. How to stop it: change the tap action, and lock the Mac's microphone at the hardware level so nothing can unmute you.", "datePublished": "2026-11-16", "dateModified": "2026-11-16", "inLanguage": "en", "mainEntityOfPage": "https://notshevvv.github.io/CallGuard/guides/stop-earbuds-unmuting-you-on-calls/", "image": "https://notshevvv.github.io/CallGuard/assets/og.jpg", "author": {"@type": "Person", "name": "notshevvv", "url": "https://github.com/notshevvv"}, "about": {"@type": "SoftwareApplication", "name": "CallGuard", "operatingSystem": "macOS 14.4 or later", "applicationCategory": "MultimediaApplication", "url": "https://notshevvv.github.io/CallGuard/", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can a Mac app mute the microphone for only WhatsApp?", "acceptedAnswer": {"@type": "Answer", "text": "No. macOS doesn't allow one app to block another app's microphone without resetting privacy permissions. Mic Lock mutes the microphones themselves, which covers every app."}}, {"@type": "Question", "name": "Is the mic really off when locked?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. A locked mic delivered exact digital silence in testing (0 non-zero samples), and CallGuard re-mutes it if anything unmutes it."}}, {"@type": "Question", "name": "How do I talk again quickly?", "acceptedAnswer": {"@type": "Answer", "text": "Click the red LOCKED icon in the menu bar, or hold Control + Option + T to talk while it stays locked."}}]}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "CallGuard", "item": "https://notshevvv.github.io/CallGuard/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://notshevvv.github.io/CallGuard/guides/"}, {"@type": "ListItem", "position": 3, "name": "How to stop AirPods or earbuds unmuting you on a call", "item": "https://notshevvv.github.io/CallGuard/guides/stop-earbuds-unmuting-you-on-calls/"}]}]</script>
+<style>
+:root{--night:#0d0b2e;--ink:#f6f3ff;--ink-2:#d6cff2;--ink-3:#a39bcf;--edge:rgba(255,255,255,.16);
+--display:"Bricolage Grotesque",-apple-system,sans-serif;--body:"Onest",-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html{background:var(--night)}
+body{margin:0;color:var(--ink);font:400 18px/1.7 var(--body);-webkit-font-smoothing:antialiased;
+background:radial-gradient(60vmax 60vmax at 0% 0%,#3a2bb0 0%,transparent 60%),radial-gradient(55vmax 55vmax at 100% 30%,#9c2f6f 0%,transparent 60%),radial-gradient(50vmax 50vmax at 40% 100%,#5a2bc0 0%,transparent 60%),var(--night);background-attachment:fixed}
+::selection{background:#b061ff;color:#fff}:focus-visible{outline:2px solid #fff;outline-offset:3px;border-radius:8px}
+a{color:#e2d4ff;text-underline-offset:3px}a:hover{color:#fff}
+.wrap{width:min(860px,100% - 32px);margin-inline:auto}
+.glass{border-radius:26px;background:linear-gradient(155deg,rgba(255,255,255,.13),rgba(255,255,255,.04) 60%);-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);border:1px solid var(--edge);box-shadow:0 1px 0 rgba(255,255,255,.3) inset,0 28px 60px -28px rgba(4,2,20,.85)}
+.rail{position:sticky;top:12px;z-index:10;margin-top:12px}
+.rail .glass{display:flex;justify-content:space-between;align-items:center;padding:10px 12px 10px 16px;border-radius:999px;background:linear-gradient(155deg,rgba(44,32,112,.84),rgba(18,14,54,.86))}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font:800 18px/1 var(--display)}
+.brand img{width:28px;height:28px;border-radius:7px}
+.dl{color:#140f36;background:linear-gradient(180deg,#fff,#e9e4ff);padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:600;font-size:15px}
+.dl:hover{color:#140f36}
+nav.crumbs{margin:44px 0 10px;font-size:14px;color:var(--ink-3)}nav.crumbs a{color:var(--ink-2)}
+h1{font:800 clamp(34px,5.4vw,58px)/1.04 var(--display);letter-spacing:-.03em;margin:0 0 14px;text-wrap:balance}
+.meta{color:var(--ink-3);font-size:14.5px;margin:0 0 26px}
+.answer{padding:24px 26px;margin:0 0 34px}
+.answer p{margin:0;font-size:19px;color:var(--ink)}
+article h2{font:700 clamp(24px,3vw,32px)/1.2 var(--display);letter-spacing:-.02em;margin:44px 0 12px}
+article p,article li{color:var(--ink-2)}article strong{color:var(--ink)}
+article ol,article ul{padding-left:22px}article li{margin:6px 0}
+.faq{margin-top:46px}.faq h3{font:700 19px/1.3 var(--display);margin:22px 0 4px;color:var(--ink)}.faq p{margin:0}
+.cta{margin:48px 0 0;padding:28px;text-align:center}
+.cta p{margin:0 0 16px;color:var(--ink-2)}
+.related{margin:40px 0 0}.related ul{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px}
+.related a{display:block;padding:14px 18px;border-radius:16px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);text-decoration:none;color:var(--ink)}
+.related a:hover{background:rgba(255,255,255,.11)}
+footer{margin:60px 0 50px;color:var(--ink-3);font-size:14px;display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:space-between}
+footer a{color:var(--ink-2);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="rail wrap"><div class="glass">
+  <a class="brand" href="../../"><img src="../../assets/icon-128.webp" alt="" width="28" height="28">CallGuard</a>
+  <a class="dl" href="https://github.com/notshevvv/CallGuard/releases/latest">Download for Mac</a>
+</div></div>
+<main class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../">CallGuard</a> / <a href="../">Guides</a></nav>
+<article>
+<h1>How to stop AirPods or earbuds unmuting you on a call</h1>
+<p class="meta">Updated 16 November 2026 · by notshevvv, maker of CallGuard</p>
+<div class="answer glass"><p>Earbud taps can toggle the call app&#x27;s mute button, so an accidental tap (rolling over in your sleep, for example) unmutes you. Change the tap action in your earbuds&#x27; settings, and for a guarantee, lock the microphone at the hardware level with CallGuard&#x27;s Mic Lock. Apps then receive digital silence whatever their own mute button says.</p></div>
+
+<h2>Why a tap unmutes you</h2>
+<p>In headset mode, an earbud tap is sent to the call app as a mute or unmute command. The app's own mute button is only a switch inside that app. Anything that flips it, a tap included, puts you back on the call.</p>
+
+<h2>Step 1: change the tap action</h2>
+<p>For AirPods, open <strong>System Settings</strong> and click your AirPods while they're connected to see their controls. For other brands, use the earbuds' companion app (for example, the maker's phone app). Set the tap you hit in your sleep to "None" or play/pause.</p>
+
+<h2>Step 2: lock the microphone itself</h2>
+<p><a href="https://github.com/notshevvv/CallGuard/releases/latest">CallGuard</a>'s <strong>Mic Lock</strong> mutes every microphone at the hardware level, so every app receives digital silence. In testing, a locked mic recorded <strong>0 non-zero samples</strong>. Many "mute" tools only set the input volume to zero, which in our test still let sound through at about <strong>−64 dBFS</strong>. If anything un-mutes a locked mic, CallGuard mutes it again within milliseconds and counts it.</p>
+<ul>
+<li>One click on the red <strong>LOCKED</strong> menu bar icon unmutes you.</li>
+<li>Hold <strong>Control + Option + T</strong> to talk while locked. <strong>Control + Option + M</strong> locks and unlocks from anywhere.</li>
+<li>It can lock itself when you go quiet on a call, and unlock when the call ends.</li>
+</ul>
+<p>macOS doesn't let one app block another app's microphone, so while Mic Lock is on, no app can hear you. That's what makes it reliable.</p>
+
+<section class="faq" aria-labelledby="faqh"><h2 id="faqh">Quick answers</h2><h3>Can a Mac app mute the microphone for only WhatsApp?</h3><p>No. macOS doesn&#x27;t allow one app to block another app&#x27;s microphone without resetting privacy permissions. Mic Lock mutes the microphones themselves, which covers every app.</p><h3>Is the mic really off when locked?</h3><p>Yes. A locked mic delivered exact digital silence in testing (0 non-zero samples), and CallGuard re-mutes it if anything unmutes it.</p><h3>How do I talk again quickly?</h3><p>Click the red LOCKED icon in the menu bar, or hold Control + Option + T to talk while it stays locked.</p></section>
+</article>
+<div class="cta glass"><p>CallGuard is free and open source. macOS 14.4 or later, Apple silicon and Intel.</p><a class="dl" href="https://github.com/notshevvv/CallGuard/releases/latest">Download CallGuard for Mac</a></div>
+<section class="related" aria-labelledby="relh"><h2 id="relh" style="font:700 22px/1.2 var(--display)">Related guides</h2><ul><li><a href="../stop-mac-lowering-volume-during-calls/">How to stop your Mac lowering music during calls →</a></li><li><a href="../bluetooth-earbuds-muffled-on-mac-calls/">Why Bluetooth earbuds sound muffled on Mac calls, and how to fix it →</a></li></ul></section>
+<footer><span>CallGuard · MIT license</span><span><a href="../../">Home</a> · <a href="https://github.com/notshevvv/CallGuard">GitHub</a> · <a href="../../llms.txt">llms.txt</a></span></footer>
+</main>
+</body>
+</html>
