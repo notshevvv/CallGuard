@@ -1,0 +1,21 @@
+# CallGuard
+
+> CallGuard is a free, open-source (MIT) macOS menu bar app for people who stay on calls for hours. It stops macOS lowering ("ducking") music and video volume during calls, locks the microphone at the hardware level so earbud taps can't unmute you, keeps Bluetooth earbuds out of muffled 16 kHz headset mode, and adds Studio Master bass, 8D audio and slowed + reverb effects to all Mac audio. macOS 14.4 or later, Apple silicon and Intel. No drivers, no analytics, nothing recorded. Version 3.3, updated 16 November 2026.
+
+## Key facts
+- Price: free (MIT license). Download: https://github.com/notshevvv/CallGuard/releases/latest
+- Platforms: macOS 14.4+ only. No iPhone version (iOS doesn't let apps mute other apps' mics or process other apps' audio). Windows users: see the Windows guide below.
+- No Ducking: during a call, the call app is moved to the Mac's hardware-muted built-in speakers (a decoy, where the ducking lands); all audio is captured with Core Audio process taps before ducking and played to the earbuds. Needs earbuds or headphones. Verified with WhatsApp for Mac; other call apps untested.
+- Mic Lock: sets the input mute property on every microphone (apps receive digital silence) and re-mutes within milliseconds if anything unmutes it. One-click unmute from the menu bar; hold Ctrl+Option+T to talk, Ctrl+Option+M toggles the lock.
+- Hi-Fi Buds: switches the system input to the Mac's built-in mic, so Bluetooth earbuds stay in stereo A2DP mode on calls.
+- Studio Master: rumble cut, de-mud dip at 320 Hz, mono bass under 120 Hz, harmonic (missing-fundamental) bass, presence and an 11 kHz air shelf, harmonics-only exciter.
+- Effects: Slowed + Reverb, Sped Up, Ambience, Harmony and Dreamy presets; pitch shift (timing stays in sync), Freeverb reverb, octave harmony, stereo width.
+- 8D Audio: rotation with equal-power panning, up to 0.6 ms interaural delay, head shadow and rear cues; manual on/off switch and speed.
+- Also: volume to 300%, bass to +12 dB, limiter at −1 dBFS, Night Mode compressor, sleep timer that fades media but keeps the call voice, auto-lock when idle on a call.
+- Effects never change the call voice.
+
+## Docs
+- [README](https://github.com/notshevvv/CallGuard/blob/main/README.md): features, install, FAQ
+- [How it works](https://github.com/notshevvv/CallGuard/blob/main/docs/how-it-works.md): technical write-up and measurements
+- [Windows guide](https://github.com/notshevvv/CallGuard/blob/main/WINDOWS.md): turning off call ducking and fixing muffled Bluetooth audio on Windows
+- [Releases](https://github.com/notshevvv/CallGuard/releases): downloads and change notes
