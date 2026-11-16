@@ -55,7 +55,14 @@
 - **Night Mode**: evens out sudden loud bits (ads, explosions, a laugh track) so they don't wake you.
 
 **For your ears**
+- **Studio Master** ✨: a mastering-style "premium sound" switch with one Intensity control. Harmonic bass lets small
+  earbuds and laptop speakers *sound* deep (your ear fills in the low note), the bass is tightened and centred, boxiness
+  is dipped, and vocals get presence and the highs get air.
+- **Effects** with one-tap presets: **Slowed + Reverb**, **Sped Up**, **Ambience**, **Harmony** and **Dreamy**, plus
+  sliders for pitch, reverb, room size, harmony and stereo width.
+- **8D Audio** 🎧: the music slowly circles your head (front, right, behind, left), with its own on/off switch and speed.
 - **Volume boost to 300%** and **bass boost to +12 dB** for all Mac audio, with a limiter that never lets it clip.
+- All of it applies to **music and videos only**. The other person's voice on a call is never changed.
 - **Live level meters**, a **call timer** and an **activity log** of everything CallGuard did.
 
 **Under the hood**
@@ -101,6 +108,11 @@ flowchart LR
 | Limiter: a −6 dBFS signal at 300% | held at −1.0 dBFS, no clipping |
 | Night Mode | a 34 dB loud-to-quiet jump squeezed to 17 dB |
 | Sleep fade | media silent, call voice unchanged |
+| Studio Master harmonic bass (50 Hz note) | adds its 100 Hz overtone 36 dB above the plain signal; the note itself is kept |
+| Studio Master tone shaping | −2.5 dB at 320 Hz, +3.3 dB at 14 kHz, 1 kHz vocals within 0.2 dB |
+| Slowed −3 / Sped up +3 | the note lands exactly 3 semitones lower or higher |
+| 8D Audio | fully right at ¼ turn, centred behind at ½, fully left at ¾; call voice stays centred |
+| Everything maxed at once (Studio, effects, 8D, 300%, +12 dB bass) | held at −1.0 dBFS, no clipping |
 | CPU | 0.0% idle, ~0.6% of one core while running |
 
 The full write-up, including how to repeat these measurements yourself, is in [docs/how-it-works.md](docs/how-it-works.md).
@@ -143,7 +155,10 @@ Tick **Start at login** in the panel so CallGuard is always there when a call st
 | Hold **⌃⌥T** | Talk while locked (the icon turns green and says **LIVE**). |
 | **No Ducking** tile | Keep media at full volume during calls (needs earbuds or headphones). |
 | **Hi-Fi Buds** tile | Keep Bluetooth earbuds in stereo by using the Mac's mic for calls. |
+| Studio Master | Premium sound. Intensity: Subtle, Rich or Max. |
 | Sound boost | Volume, bass, call voice volume, Night Mode and live meters. |
+| Effects | Tap a preset, then fine-tune pitch, reverb, room, harmony and width. |
+| 8D Audio | Switch on, pick a speed, wear earphones. |
 | Falling asleep on a call | Sleep timer, auto-lock when you go quiet, unlock when the call ends. |
 | Quit | Gives every mic back and restores your audio setup. |
 
@@ -205,6 +220,9 @@ Bug reports, call-app test results and pull requests are welcome. The code is sm
 |---|---|
 | `Engine.swift` | Process taps, aggregate device, the real-time DSP (two buses, bass, Night Mode, fade, limiter) |
 | `Decoy.swift` | The No Ducking decoy: muted speakers, volume-key mirroring, crash recovery |
+| `StudioMaster.swift` | The premium-sound chain (harmonic bass, mono low end, de-mud, presence, air, exciter) |
+| `Effects.swift` | Pitch shifter, Freeverb reverb, harmony layer, stereo width |
+| `EightD.swift` | 8D rotation: equal-power panning, interaural delay, head shadow, rear cues |
 | `MicLock.swift` | Hardware mute, re-mute listeners, push-to-talk, Hi-Fi Buds |
 | `CallMonitor.swift` | Call detection, idle time, global shortcuts |
 | `PanelView.swift`, `StatusController.swift` | The Liquid Glass panel and menu bar icon |
