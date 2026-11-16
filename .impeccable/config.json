@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": [
+          "docs/index.html"
+        ],
+        "createdAt": "2026-11-16T17:16:21.104Z",
+        "reason": "assistant: #0a0628 is the page's neutral navy elevation shadow with a 14-28px y-offset, not a chromatic halo"
+      },
+      {
+        "rule": "radial-halo",
+        "value": "*",
+        "files": [
+          "docs/index.html"
+        ],
+        "createdAt": "2026-11-16T17:16:21.129Z",
+        "reason": "assistant: the drifting colour field is the committed Liquid Glass world in the surface brief, the field the glass refracts"
+      }
+    ]
+  }
+}

@@ -7,6 +7,7 @@
 <meta name="description" content="CallGuard is a free, open-source Mac menu bar app. It stops macOS lowering music during calls, locks your mic so earbud taps can't unmute you, keeps Bluetooth earbuds hi-fi, and adds Studio Master bass, 8D audio and slowed + reverb.">
 <link rel="canonical" href="https://notshevvv.github.io/CallGuard/">
 <link rel="icon" href="assets/icon-256.png">
+<meta name="theme-color" content="#0d0b2e">
 <meta property="og:type" content="website">
 <meta property="og:title" content="CallGuard: the all-night call companion for Mac">
 <meta property="og:description" content="Stop call ducking, lock your mic, keep earbuds hi-fi, and add Studio Master bass, 8D audio and slowed + reverb. Free and open source.">
@@ -14,75 +15,611 @@
 <meta property="og:url" content="https://notshevvv.github.io/CallGuard/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://notshevvv.github.io/CallGuard/assets/banner.png">
+<link rel="alternate" type="text/plain" href="llms.txt" title="llms.txt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "CallGuard", "description": "Free, open-source macOS menu bar app that stops call audio ducking, locks the microphone, keeps Bluetooth earbuds in hi-fi, and adds Studio Master bass, 8D audio and slowed + reverb effects to all Mac audio.", "operatingSystem": "macOS 14.4 or later", "applicationCategory": "MultimediaApplication", "softwareVersion": "3.3.0", "dateModified": "2026-11-16", "license": "https://opensource.org/licenses/MIT", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "downloadUrl": "https://github.com/notshevvv/CallGuard/releases/latest", "url": "https://notshevvv.github.io/CallGuard/", "image": "https://notshevvv.github.io/CallGuard/assets/banner.png", "screenshot": "https://notshevvv.github.io/CallGuard/assets/panel-dark.png", "codeRepository": "https://github.com/notshevvv/CallGuard", "featureList": ["Stop macOS audio ducking during calls", "Hardware microphone lock with push-to-talk", "Keep Bluetooth earbuds in stereo hi-fi on calls", "Studio Master premium sound with harmonic bass", "8D audio", "Slowed + reverb, sped up, ambience and harmony effects", "Volume boost to 300% and bass boost to +12 dB", "Sleep timer that fades media but keeps the call voice", "Night Mode compressor"], "author": {"@type": "Person", "name": "notshevvv", "url": "https://github.com/notshevvv"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I stop my Mac lowering the volume of music and videos during calls?", "acceptedAnswer": {"@type": "Answer", "text": "macOS turns other audio down (\"ducks\" it) whenever a call app runs its voice processing, and there is no setting to switch it off. CallGuard's No Ducking fixes it: during a call it points the call app at the Mac's speakers, muted in hardware, and plays everything to your earbuds from a copy taken before the volume drop."}}, {"@type": "Question", "name": "Why does my music sound muffled on calls with Bluetooth earbuds or AirPods on a Mac?", "acceptedAnswer": {"@type": "Answer", "text": "When a call app uses the earbuds' microphone, Bluetooth switches them into headset mode, which is 16 kHz mono and sounds like an old phone line. CallGuard's Hi-Fi Buds makes calls use the Mac's built-in mic instead, so the earbuds stay in stereo (44.1–48 kHz) high quality."}}, {"@type": "Question", "name": "How do I stop my earbuds or AirPods unmuting me on a WhatsApp call?", "acceptedAnswer": {"@type": "Answer", "text": "Tapping an earbud can toggle the call app's mute button, for example while you sleep. CallGuard's Mic Lock mutes every microphone at the hardware level, so apps receive digital silence whatever their own button says. It re-mutes within milliseconds if anything unmutes it. Click the red LOCKED icon to talk again."}}, {"@type": "Question", "name": "Can a Mac app block the microphone for just one app?", "acceptedAnswer": {"@type": "Answer", "text": "No. macOS doesn't let one app block another app's microphone without resetting privacy permissions. Mic Lock mutes the microphones themselves, so while it's on no app can hear you. Push-to-talk (hold ⌃⌥T) and the one-click unmute let you speak when you need to."}}, {"@type": "Question", "name": "How do I get 8D audio on a Mac for any song?", "acceptedAnswer": {"@type": "Answer", "text": "Turn on CallGuard's 8D Audio and wear earphones. It makes any app's sound, such as Spotify, YouTube or Apple Music, circle your head, using equal-power panning, a small delay between the ears and head-shadow filtering. A Speed slider sets one turn every 5–18 seconds."}}, {"@type": "Question", "name": "How do I play Spotify or YouTube slowed + reverb on a Mac?", "acceptedAnswer": {"@type": "Answer", "text": "Choose the Slowed + Reverb preset in CallGuard's Effects. It lowers the pitch by 3 semitones and adds a large reverb to all system audio live. Live audio can't play slower without falling behind, so the timing stays in sync with the video while it sounds slowed."}}, {"@type": "Question", "name": "Is there a free bass booster and volume booster for Mac?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. CallGuard boosts all Mac audio up to 300% and bass up to +12 dB, with a limiter that holds peaks at −1 dBFS so it never clips. Studio Master adds harmonic bass, so small earbuds and laptop speakers can sound deep, plus clearer vocals and airy highs. It's free under the MIT license."}}, {"@type": "Question", "name": "Which call apps work with No Ducking?", "acceptedAnswer": {"@type": "Answer", "text": "Verified with WhatsApp for Mac. It should work with any app that follows the system output device (FaceTime, Zoom, Teams, Google Meet in a browser, Discord, Telegram…), but these haven't been tested yet. If an app doesn't move, CallGuard falls back to extra gain automatically. Please report what you find."}}, {"@type": "Question", "name": "Why does my Sound menu say \"MacBook Speakers\" during a call?", "acceptedAnswer": {"@type": "Answer", "text": "That's the decoy. The speakers are hardware-muted and your audio is on your earbuds. Volume keys still control the earbuds, and the output switches back on its own when the call ends."}}, {"@type": "Question", "name": "Does No Ducking work on the Mac's own speakers?", "acceptedAnswer": {"@type": "Answer", "text": "No, because the speakers are the decoy. Use earbuds, headphones or another output. On the speakers, CallGuard uses the extra-gain fallback instead."}}, {"@type": "Question", "name": "What happens if CallGuard crashes during a call?", "acceptedAnswer": {"@type": "Answer", "text": "The decoy speakers stay muted, so you get silence rather than a loud laptop in the night. Reopen CallGuard and it restores everything. Since 3.1 it also only uses the decoy after it has heard real audio, and a silence guard hands the call back to your earbuds if capture ever stops."}}, {"@type": "Question", "name": "Does CallGuard record my audio or send data anywhere?", "acceptedAnswer": {"@type": "Answer", "text": "No. CallGuard has no network code and no analytics. Audio stays in memory for a few milliseconds while it is processed, then goes straight to your output. Nothing is recorded or saved."}}, {"@type": "Question", "name": "Is there an iPhone or Windows version?", "acceptedAnswer": {"@type": "Answer", "text": "No iPhone version: iOS doesn't let apps mute other apps' mics or process other apps' sound. On Windows, most of this is built in. See WINDOWS.md, which includes one-click registry files to turn call ducking off."}}]}]</script>
 <style>
-:root{--bg:#0d0b2a;--card:rgba(255,255,255,.06);--line:rgba(255,255,255,.12);--text:#f2f0ff;--muted:#b9b6e6;--accent:#7cf5e6;--accent2:#5b3bff}
-@media (prefers-color-scheme: light){:root{--bg:#f6f4ff;--card:#fff;--line:rgba(30,20,90,.12);--text:#17143a;--muted:#5a5680;--accent:#1f7fff;--accent2:#5b3bff}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:17px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Helvetica,Arial,sans-serif}
-main{max-width:880px;margin:0 auto;padding:32px 16px 64px}
-header{text-align:center;padding:24px 0}header img.icon{width:112px;height:112px}
-h1{font-size:clamp(34px,6vw,56px);line-height:1.05;margin:12px 0 8px;letter-spacing:-1px}
-.lede{font-size:clamp(17px,2.4vw,20px);color:var(--muted);max-width:680px;margin:0 auto}
-.cta{display:inline-block;margin:24px 8px 0;padding:14px 26px;border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:700;text-decoration:none}
-.cta.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
-.small{font-size:13px;color:var(--muted)}
-section{margin-top:48px}h2{font-size:28px;letter-spacing:-.5px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
-.card h3{margin:0 0 6px;font-size:18px}.card p{margin:0;color:var(--muted);font-size:15.5px}
-picture img{display:block;margin:28px auto 0;max-width:min(430px,100%);height:auto;border-radius:26px}
-details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 16px;margin:10px 0}
-summary{cursor:pointer;list-style:none}summary h3{display:inline;font-size:17px}details p{color:var(--muted);margin-top:4px}
-a{color:var(--accent)}footer{margin-top:56px;text-align:center;font-size:14px;color:var(--muted)}
+:root{
+  --night:#0d0b2e; --night-2:#16113f; --ink:#f6f3ff; --ink-2:#cfc8ee; --ink-3:#a39bcf;
+  --edge:rgba(255,255,255,.16); --edge-hi:rgba(255,255,255,.42);
+  --red:#ff453a; --blue:#2b9eff; --violet:#b061ff; --gold:#ffc759; --pink:#ee55bf; --teal:#2ed9d9; --peri:#6b73ff; --live:#34d27b;
+  --display:"Bricolage Grotesque", -apple-system, BlinkMacSystemFont, sans-serif;
+  --body:"Onest", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --shadow:0 1px 0 rgba(255,255,255,.35) inset, 0 -1px 0 rgba(255,255,255,.05) inset, 0 28px 60px -28px rgba(4,2,20,.85), 0 8px 18px -12px rgba(4,2,20,.6);
+}
+*{box-sizing:border-box}
+html{background:var(--night);scroll-behavior:smooth;scrollbar-color:#3a2f7a var(--night)}
+body{margin:0;color:var(--ink);font:400 17px/1.6 var(--body);-webkit-font-smoothing:antialiased;overflow-x:clip;background:transparent}
+::selection{background:var(--violet);color:#fff}
+::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:var(--night)}::-webkit-scrollbar-thumb{background:#3a2f7a;border-radius:10px;border:2px solid var(--night)}
+:focus-visible{outline:2px solid #fff;outline-offset:3px;border-radius:10px}
+a{color:#d9c8ff;text-underline-offset:3px;text-decoration-thickness:1px}a:hover{color:#fff}
+img{max-width:100%;height:auto;display:block}
+.wrap{width:min(1180px,100% - 32px);margin-inline:auto}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* the colour field behind everything */
+.field{position:fixed;inset:-10vmax;z-index:-1;pointer-events:none;background:var(--night)}
+.field i{position:absolute;border-radius:50%;filter:blur(60px);opacity:1;will-change:transform}
+.field .a{width:62vmax;height:62vmax;left:-8vmax;top:-12vmax;background:radial-gradient(circle,#4a35e0 0%,rgba(74,53,224,.35) 40%,transparent 68%);animation:drift-a 38s ease-in-out infinite alternate}
+.field .b{width:56vmax;height:56vmax;right:-14vmax;top:8vmax;background:radial-gradient(circle,#c23a86 0%,rgba(194,58,134,.3) 42%,transparent 66%);animation:drift-b 44s ease-in-out infinite alternate}
+.field .c{width:50vmax;height:50vmax;left:22vmax;bottom:-18vmax;background:radial-gradient(circle,#7a35f0 0%,rgba(122,53,240,.3) 40%,transparent 66%);animation:drift-c 52s ease-in-out infinite alternate}
+.field .d{width:34vmax;height:34vmax;right:8vmax;bottom:-6vmax;background:radial-gradient(circle,#ff8a3d 0%,transparent 60%);opacity:.38;animation:drift-a 60s ease-in-out infinite alternate-reverse}
+body.locked .field .b{background:radial-gradient(circle,#c22a3a 0%,transparent 62%)}
+.field .b{transition:background 1.2s var(--ease)}
+@keyframes drift-a{to{transform:translate(8vmax,6vmax) scale(1.08)}}
+@keyframes drift-b{to{transform:translate(-10vmax,8vmax) scale(.94)}}
+@keyframes drift-c{to{transform:translate(6vmax,-8vmax) scale(1.1)}}
+
+/* glass */
+.glass{position:relative;border-radius:26px;background:linear-gradient(155deg,rgba(255,255,255,.15),rgba(255,255,255,.045) 55%,rgba(255,255,255,.08));
+  -webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%);border:1px solid var(--edge);box-shadow:var(--shadow)}
+.glass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.18),transparent 22%);mix-blend-mode:screen;opacity:.6}
+
+/* nav rail */
+.rail{position:sticky;top:12px;z-index:40;margin-top:12px}
+.rail .glass,.featbar .glass{background:linear-gradient(155deg,rgba(44,32,112,.84),rgba(18,14,54,.86))}
+.rail .glass{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 12px 10px 16px;border-radius:999px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font:800 19px/1 var(--display);letter-spacing:-.01em}
+.brand img{width:30px;height:30px;border-radius:8px}
+.rail nav{display:flex;gap:6px;align-items:center}
+.rail nav a{color:var(--ink-2);text-decoration:none;font-size:14.5px;padding:8px 12px;border-radius:999px;transition:background .3s,color .3s}
+.rail nav a:hover{color:#fff;background:rgba(255,255,255,.1)}
+.status{display:inline-flex;align-items:center;gap:8px;font:600 12px/1 var(--mono);letter-spacing:.04em;padding:8px 12px;border-radius:999px;background:rgba(52,210,123,.16);color:#c9f5dc;transition:background .5s,color .5s}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--live)}
+.status .l{display:none}
+body.locked .status{background:rgba(255,69,58,.2);color:#ffd5d1}
+body.locked .status i{background:var(--red)} body.locked .status .u{display:none} body.locked .status .l{display:inline}
+@media (max-width:700px){.rail nav a.hide-s{display:none}.status{display:none}}
+
+/* buttons */
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;padding:15px 24px;border-radius:999px;font:600 16px/1 var(--body);text-decoration:none;cursor:pointer;border:0;
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease),background .35s}
+.btn svg{width:19px;height:19px}
+.btn.primary{color:#140f36;background:linear-gradient(180deg,#ffffff,#e9e4ff);box-shadow:0 1px 0 #fff inset,0 -2px 0 rgba(80,60,180,.18) inset,0 14px 30px -12px rgba(10,6,40,.8)}
+.btn.primary:hover{color:#140f36;transform:translateY(-2px);box-shadow:0 1px 0 #fff inset,0 -2px 0 rgba(80,60,180,.18) inset,0 20px 36px -12px rgba(10,6,40,.9)}
+.btn.clear{color:#fff;background:rgba(255,255,255,.1);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 1px 0 rgba(255,255,255,.3) inset,0 0 0 1px rgba(255,255,255,.16) inset,0 12px 26px -14px rgba(4,2,20,.8)}
+.btn.clear:hover{color:#fff;background:rgba(255,255,255,.17);transform:translateY(-2px)}
+.btn:active{transform:translateY(1px) scale(.99)}
+.fine{font-size:13.5px;color:var(--ink-3);margin-top:16px}
+
+/* hero */
+.hero{padding:72px 0 0}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:40px;align-items:center}
+@media (max-width:940px){.hero-grid{grid-template-columns:1fr;gap:48px}.hero{padding-top:44px}}
+h1{font:800 clamp(44px,6.6vw,86px)/.98 var(--display);letter-spacing:-.035em;margin:0 0 22px;text-wrap:balance}
+h1 .tint{color:transparent;background:none;-webkit-text-stroke:0}
+h1 .lock-word{display:inline-block;color:#ffd0cb;transition:color .6s var(--ease)}
+body:not(.locked) h1 .lock-word{color:#fff}
+.lede{font-size:clamp(17px,1.55vw,19.5px);color:var(--ink-2);max-width:33em;margin:0 0 32px}
+.lede strong{color:var(--ink);font-weight:600}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.stage{position:relative;justify-self:center;perspective:1400px}
+.frame{padding:12px;border-radius:34px;transform:rotateY(-9deg) rotateX(4deg);transform-style:preserve-3d;transition:transform 1.2s var(--ease)}
+.frame img{width:min(360px,74vw);border-radius:24px}
+.stage:hover .frame{transform:rotateY(-4deg) rotateX(2deg)}
+.mictile{position:absolute;left:-84px;bottom:44px;width:178px;padding:18px 16px 16px;border-radius:26px;text-align:center;cursor:pointer;border:1px solid var(--edge);color:#fff;font:inherit;
+  background:linear-gradient(155deg,rgba(84,66,190,.82),rgba(34,24,92,.86));-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);box-shadow:var(--shadow);
+  transition:background .6s var(--ease),transform .35s var(--ease)}
+.mictile:hover{transform:translateY(-3px)}
+.mictile:active{transform:scale(.97)}
+.mictile .disc{width:62px;height:62px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);box-shadow:0 1px 0 rgba(255,255,255,.35) inset;transition:background .6s var(--ease)}
+.mictile .disc svg{width:28px;height:28px}
+.mictile b{display:block;font:700 17px/1.1 var(--display)}
+.mictile span{display:block;font-size:12.5px;color:var(--ink-2);margin-top:4px}
+.mictile .on-only{display:none}
+body.locked .mictile{background:linear-gradient(155deg,rgba(214,52,44,.9),rgba(120,20,30,.9))}
+body.locked .mictile .disc{background:linear-gradient(180deg,#ff6a5f,#e0281e)}
+body.locked .mictile .off-only{display:none} body.locked .mictile .on-only{display:inline}
+.press{position:absolute;left:-84px;bottom:8px;width:178px;text-align:center;font:600 12px/1 var(--mono);color:var(--ink-3);letter-spacing:.03em}
+@media (max-width:940px){.mictile{left:-12px;bottom:-28px}.press{display:none}}
+
+/* feature bar with sliding lens */
+.featbar{position:sticky;top:84px;z-index:30;margin-top:72px}
+.featbar .glass{display:flex;gap:2px;padding:7px;border-radius:999px;overflow-x:auto;scrollbar-width:none}
+.featbar .glass::-webkit-scrollbar{display:none}
+.lens{position:absolute;top:7px;bottom:7px;left:0;width:0;border-radius:999px;background:linear-gradient(180deg,color-mix(in oklab,var(--c,#fff) 55%,transparent),color-mix(in oklab,var(--c,#fff) 25%,transparent));box-shadow:0 1px 0 rgba(255,255,255,.45) inset,0 6px 16px -8px rgba(0,0,0,.6);transform:translateX(var(--x,0));transition:transform .7s var(--ease),width .7s var(--ease),background .7s var(--ease);z-index:0}
+.feat{position:relative;z-index:1;flex:1;white-space:nowrap;text-align:center;padding:11px 14px;border-radius:999px;font:600 14.5px/1 var(--body);color:var(--ink-2);text-decoration:none;transition:color .4s}
+.feat:hover{color:#fff}.feat.on{color:#fff}
+@media (max-width:700px){.featbar{top:76px}.feat{font-size:13px;padding:10px 12px}}
+
+/* feature sections */
+.band{padding:130px 0 40px;--c:#fff}
+.cols{display:grid;grid-template-columns:1fr 1.08fr;gap:64px;align-items:center}
+.cols.flip{grid-template-columns:1.08fr 1fr}.cols.flip > :first-child{order:2}
+@media (max-width:940px){.cols,.cols.flip{grid-template-columns:1fr;gap:36px}.cols.flip > :first-child{order:0}.band{padding-top:96px}}
+.tag{display:inline-flex;align-items:center;gap:10px;margin-bottom:18px;font:600 15px/1 var(--body);color:#fff}
+.tag i{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(160deg,color-mix(in oklab,var(--c) 85%,#fff),var(--c));box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 8px 16px -8px color-mix(in oklab,var(--c) 70%,#000)}
+.tag svg{width:18px;height:18px;color:#fff}
+h2{font:800 clamp(36px,4.8vw,62px)/1.02 var(--display);letter-spacing:-.03em;margin:0 0 20px;text-wrap:balance}
+.copy p{color:var(--ink-2);max-width:35em;margin:0 0 16px}
+.copy p strong{color:var(--ink);font-weight:600}
+.facts{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:12px}
+.facts li{display:flex;gap:12px;align-items:baseline;color:var(--ink-2);font-size:15.5px}
+.facts li svg{flex:none;width:16px;height:16px;color:color-mix(in oklab,var(--c) 70%,#fff);transform:translateY(2px)}
+.kbd{font:600 13px/1 var(--mono);color:#fff;padding:5px 8px;border-radius:7px;background:rgba(255,255,255,.12);box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 0 0 1px rgba(255,255,255,.12) inset}
+
+/* the pane that lights up */
+.pane{padding:30px;transition:background 1.1s var(--ease),border-color 1.1s var(--ease)}
+.band.tuned .pane{background:linear-gradient(155deg,color-mix(in oklab,var(--c) 34%,rgba(255,255,255,.08)),rgba(255,255,255,.04) 60%,color-mix(in oklab,var(--c) 14%,transparent));border-color:color-mix(in oklab,var(--c) 45%,rgba(255,255,255,.2))}
+.readout{font:600 12px/1.4 var(--mono);letter-spacing:.03em;color:var(--ink-3)}
+.readout b{color:#fff;font-weight:600}
+
+/* ducking meters */
+.meters{display:grid;gap:18px}
+.mrow{display:grid;grid-template-columns:130px 1fr 64px;gap:14px;align-items:center}
+.mrow .lab{font-weight:600;font-size:15px}
+.track{height:12px;border-radius:999px;background:rgba(0,0,0,.28);box-shadow:inset 0 1px 2px rgba(0,0,0,.5);overflow:hidden}
+.track i{display:block;height:100%;width:var(--w,80%);border-radius:999px;background:linear-gradient(90deg,#7fe3ff,var(--c) 70%,#fff);transition:width 1.4s var(--ease)}
+.mrow .db{font:600 13px/1 var(--mono);text-align:right}
+.live{display:inline-flex;align-items:center;gap:8px;margin-bottom:22px;font:600 12px/1 var(--mono);color:var(--ink-2)}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--live)}
+
+/* readings */
+.readings{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.reading{padding:20px;border-radius:18px;background:rgba(0,0,0,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.reading .v{font:600 clamp(30px,3.4vw,42px)/1 var(--mono);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.reading .k{margin-top:10px;color:var(--ink-2);font-size:14.5px;line-height:1.45}
+.readings.four{grid-template-columns:repeat(4,1fr)}
+.pane .readings{gap:0}
+.pane .reading{background:none;box-shadow:none;padding:6px 22px}
+
+.pane .reading + .reading{border-left:1px solid rgba(255,255,255,.16)}
+@media (max-width:440px){.pane .reading{padding:16px 0}.pane .reading + .reading{border-left:0;border-top:1px solid rgba(255,255,255,.16)}}
+@media (max-width:860px){.readings.four{grid-template-columns:1fr 1fr}}
+@media (max-width:440px){.readings,.readings.four{grid-template-columns:1fr}}
+
+/* spectrum */
+.spec-row + .spec-row{margin-top:24px}
+.spec-row .lab{display:flex;justify-content:space-between;margin-bottom:10px}
+.spec{display:flex;gap:4px;align-items:flex-end;height:92px}
+.spec span{flex:1;border-radius:4px;background:linear-gradient(180deg,#fff,var(--c));height:var(--h);opacity:.9;transition:opacity .8s}
+.spec.muffled span:nth-child(n+12){opacity:.1}
+.spec.muffled span{filter:saturate(.3)}
+
+/* studio */
+.lvls{display:flex;gap:14px;justify-content:center;height:150px;align-items:flex-end}
+.lvl{width:30px;height:100%;border-radius:10px;background:rgba(0,0,0,.25);box-shadow:inset 0 1px 2px rgba(0,0,0,.5);position:relative;overflow:hidden}
+.lvl i{position:absolute;left:0;right:0;bottom:0;height:var(--v,40%);border-radius:10px;background:linear-gradient(0deg,var(--c),#fff3d1 85%,#ff8a7a)}
+.eq{margin-top:22px}.eq svg{width:100%;height:auto}
+.eq .curve{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round}
+.eq .flat{fill:none;stroke:rgba(255,255,255,.28);stroke-width:1.5;stroke-dasharray:4 6}
+.eq .fill{fill:url(#eqfill)}
+.eq text{font:600 11px var(--mono);fill:var(--ink-2)}
+
+/* effects */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{appearance:none;border:0;cursor:pointer;padding:11px 16px;border-radius:999px;font:600 14.5px/1 var(--body);color:var(--ink-2);background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);transition:background .35s,color .35s,box-shadow .35s}
+.chip:hover{color:#fff;background:rgba(255,255,255,.14)}
+.chip[aria-pressed="true"]{color:#fff;background:linear-gradient(180deg,color-mix(in oklab,var(--c) 62%,#3a0730),color-mix(in oklab,var(--c) 50%,#2a0524));box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 8px 18px -10px color-mix(in oklab,var(--c) 80%,#000)}
+.sliders{margin-top:26px;display:grid;gap:16px}
+.srow{display:grid;grid-template-columns:76px 1fr 56px;gap:12px;align-items:center;font-size:14.5px}
+.srow .track i{background:linear-gradient(90deg,color-mix(in oklab,var(--c) 60%,#fff),var(--c));transition:width .8s var(--ease)}
+.srow .v{font:600 13px/1 var(--mono);text-align:right}
+
+/* 8D */
+.orbit{position:relative;max-width:380px;margin-inline:auto;aspect-ratio:1}
+.orbit svg{width:100%;height:100%}
+.orbit .ring{fill:none;stroke:rgba(255,255,255,.22);stroke-dasharray:3 7}
+.orbit .src{transform-origin:200px 200px}
+.ears{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
+.ears .readout{margin-top:8px}
+
+/* night */
+.night ol{list-style:none;margin:0;padding:0;position:relative}
+.night ol::before{content:"";position:absolute;left:104px;top:20px;bottom:20px;width:2px;background:rgba(255,255,255,.14)}
+.night li{display:grid;grid-template-columns:86px 20px 1fr;gap:16px;padding:12px 0;align-items:start}
+.night .t{font:600 13.5px/1.5 var(--mono);color:var(--ink-2);text-align:right}
+.night .pip{position:relative;z-index:1;width:14px;height:14px;margin-top:4px;border-radius:50%;background:rgba(255,255,255,.18);box-shadow:0 0 0 3px rgba(13,11,46,.7);transition:background .5s,transform .5s var(--ease)}
+.night li.lit .pip{background:var(--c);transform:scale(1.15)}
+.night .what b{display:block;font:700 17px/1.25 var(--display)}
+.night .what span{color:var(--ink-2);font-size:15px}
+
+/* faq */
+.faq{max-width:880px}
+.faq details{border-radius:20px;margin:10px 0;padding:2px 20px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);transition:background .35s}
+.faq details[open]{background:rgba(255,255,255,.1)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:18px;padding:18px 0}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary h3{margin:0;font:700 clamp(17px,1.8vw,20px)/1.3 var(--display);letter-spacing:-.01em}
+.plus{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);transition:transform .45s var(--ease)}
+.faq details[open] .plus{transform:rotate(45deg)}
+.faq details p{margin:0 0 20px;color:var(--ink-2);max-width:64ch}
+
+/* end */
+.signoff{padding:120px 0 90px}
+.signoff .glass{padding:clamp(36px,6vw,72px);text-align:center;border-radius:36px}
+.signoff h2{margin-bottom:14px}
+.signoff .lede{margin-inline:auto}
+.signoff .ctas{justify-content:center}
+footer{padding:10px 0 60px;color:var(--ink-3);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+footer nav{display:flex;flex-wrap:wrap;gap:10px 22px}
+footer a{color:var(--ink-2);text-decoration:none}footer a:hover{color:#fff}
+
+/* reveal: panes slide up out of a blur as their section arrives */
+.js .rise{opacity:0;transform:translateY(28px) scale(.985);filter:blur(10px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease),filter 1.1s var(--ease)}
+.js .tuned .rise{opacity:1;transform:none;filter:none}
+.js .tuned .rise.later{transition-delay:.12s}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .field i{animation:none}
+  .js .rise{opacity:1;transform:none;filter:none;transition:none}
+  .frame,.lens,.track i,.mictile{transition:none}
+}
 </style>
 </head>
 <body>
-<main>
-<header>
-<img class="icon" src="assets/icon-256.png" alt="CallGuard app icon: a shield with a crescent moon and sound bars">
-<h1>CallGuard</h1>
-<p class="lede"><strong>The all-night call companion for Mac.</strong> A free, open-source menu bar app that stops your Mac lowering music during calls, locks your mic so an earbud tap can't unmute you, keeps Bluetooth earbuds out of muffled call mode, and adds Studio Master bass, 8D audio and slowed + reverb to any app.</p>
-<a class="cta" href="https://github.com/notshevvv/CallGuard/releases/latest">Download for Mac (free)</a><a class="cta ghost" href="https://github.com/notshevvv/CallGuard">View on GitHub</a>
-<p class="small">Version 3.3 · macOS 14.4 or later · Apple silicon and Intel · MIT license · updated 16 November 2026</p>
-<picture><source media="(prefers-color-scheme: dark)" srcset="assets/panel-dark.png"><img src="assets/panel-light.png" width="500" height="780" alt="CallGuard's Liquid Glass panel: Mic Lock, No Ducking and Hi-Fi Buds tiles, Studio Master, sound boost and effects"></picture>
-</header>
+<div class="field" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>
+<a class="sr" href="#main">Skip to content</a>
 
-<section>
-<h2>What it fixes</h2>
-<div class="grid">
-<div class="card"><h3>No more call ducking</h3><p>macOS drops YouTube and Spotify to a whisper during calls. CallGuard keeps them at full volume by moving the call to a muted decoy device and playing everything to your earbuds from before the drop.</p></div>
-<div class="card"><h3>Mic Lock</h3><p>Hardware-level mute for every mic. An earbud tap or the app's own button can't unmute you, and anything that tries is reversed in milliseconds. Hold ⌃⌥T to talk.</p></div>
-<div class="card"><h3>Hi-Fi Buds</h3><p>Stops Bluetooth earbuds dropping into 16 kHz mono "headset" mode on calls, so music stays in stereo.</p></div>
-<div class="card"><h3>Studio Master</h3><p>Harmonic bass makes small earbuds sound deep. The bass is tightened and centred, vocals get presence and the highs get air.</p></div>
-<div class="card"><h3>8D Audio and effects</h3><p>The music circles your head. Slowed + Reverb, Sped Up, Ambience, Harmony and Dreamy presets work on any app, live.</p></div>
-<div class="card"><h3>Made for falling asleep</h3><p>A sleep timer fades the music but keeps the call voice. The mic locks itself when you go quiet. Night Mode tames sudden loud sounds.</p></div>
+<div class="rail wrap">
+  <div class="glass">
+    <a class="brand" href="#top" aria-label="CallGuard home"><img src="assets/icon-256.png" alt="" width="30" height="30">CallGuard</a>
+    <nav aria-label="Main">
+      <span class="status" aria-live="polite"><i></i><span class="u">MIC LIVE</span><span class="l">MIC LOCKED</span></span>
+      <a class="hide-s" href="#ducking">Features</a>
+      <a class="hide-s" href="#faq">FAQ</a>
+      <a href="https://github.com/notshevvv/CallGuard">GitHub</a>
+    </nav>
+  </div>
 </div>
-<p class="small">Music and videos only: the other person's voice is never changed. No drivers, no analytics, nothing recorded. 0.0% CPU when idle.</p>
+
+<main id="main">
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="wrap hero-grid">
+    <div>
+      <h1 id="hero-title">Fall asleep on the call. Your mic stays <span class="lock-word">locked.</span></h1>
+      <p class="lede"><strong>CallGuard is the all-night call companion for Mac.</strong> It locks your mic so an earbud tap can't unmute you, keeps YouTube and Spotify at full volume during calls, keeps your earbuds in hi-fi, and makes everything sound richer. Free and open source.</p>
+      <div class="ctas">
+        <a class="btn primary" href="https://github.com/notshevvv/CallGuard/releases/latest"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.73-1.35-.14-2.64.8-3.33.8-.7 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.1 8.79.74 1.06 1.61 2.25 2.75 2.2 1.11-.04 1.52-.71 2.86-.71 1.33 0 1.71.71 2.88.69 1.19-.02 1.94-1.08 2.66-2.15.84-1.23 1.19-2.43 1.2-2.49-.03-.01-2.3-.88-2.33-3.52zM14.2 6.13c.6-.74 1.01-1.75.9-2.77-.87.04-1.94.59-2.56 1.32-.56.64-1.05 1.68-.92 2.67.97.08 1.97-.49 2.58-1.22z"/></svg>Download for Mac</a>
+        <a class="btn clear" href="https://github.com/notshevvv/CallGuard"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>View on GitHub</a>
+      </div>
+      <p class="fine">Version 3.3 · macOS 14.4 or later · Apple silicon and Intel · MIT license · no drivers</p>
+    </div>
+    <div class="stage">
+      <div class="frame glass">
+        <img src="assets/panel-dark.png" width="500" height="780" alt="The CallGuard panel: Mic Lock, No Ducking and Hi-Fi Buds tiles, the Studio Master card, sound boost sliders and effects presets">
+      </div>
+      <button class="mictile" id="mictile" type="button" aria-pressed="false">
+        <span class="disc"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>
+        <b>Mic Lock</b>
+        <span><span class="off-only">Tap to try it</span><span class="on-only">No one hears you</span></span>
+      </button>
+    </div>
+  </div>
+
 </section>
 
-<section>
-<h2>Questions people ask</h2>
-<details><summary><h3>How do I stop my Mac lowering the volume of music and videos during calls?</h3></summary><p>macOS turns other audio down (&quot;ducks&quot; it) whenever a call app runs its voice processing, and there is no setting to switch it off. CallGuard&#x27;s <strong>No Ducking</strong> fixes it: during a call it points the call app at the Mac&#x27;s speakers, muted in hardware, and plays everything to your earbuds from a copy taken before the volume drop.</p></details>
-<details><summary><h3>Why does my music sound muffled on calls with Bluetooth earbuds or AirPods on a Mac?</h3></summary><p>When a call app uses the earbuds&#x27; microphone, Bluetooth switches them into headset mode, which is 16 kHz mono and sounds like an old phone line. CallGuard&#x27;s <strong>Hi-Fi Buds</strong> makes calls use the Mac&#x27;s built-in mic instead, so the earbuds stay in stereo (44.1–48 kHz) high quality.</p></details>
-<details><summary><h3>How do I stop my earbuds or AirPods unmuting me on a WhatsApp call?</h3></summary><p>Tapping an earbud can toggle the call app&#x27;s mute button, for example while you sleep. CallGuard&#x27;s <strong>Mic Lock</strong> mutes every microphone at the hardware level, so apps receive digital silence whatever their own button says. It re-mutes within milliseconds if anything unmutes it. Click the red LOCKED icon to talk again.</p></details>
-<details><summary><h3>Can a Mac app block the microphone for just one app?</h3></summary><p>No. macOS doesn&#x27;t let one app block another app&#x27;s microphone without resetting privacy permissions. Mic Lock mutes the microphones themselves, so while it&#x27;s on no app can hear you. Push-to-talk (hold ⌃⌥T) and the one-click unmute let you speak when you need to.</p></details>
-<details><summary><h3>How do I get 8D audio on a Mac for any song?</h3></summary><p>Turn on CallGuard&#x27;s <strong>8D Audio</strong> and wear earphones. It makes any app&#x27;s sound, such as Spotify, YouTube or Apple Music, circle your head, using equal-power panning, a small delay between the ears and head-shadow filtering. A Speed slider sets one turn every 5–18 seconds.</p></details>
-<details><summary><h3>How do I play Spotify or YouTube slowed + reverb on a Mac?</h3></summary><p>Choose the <strong>Slowed + Reverb</strong> preset in CallGuard&#x27;s Effects. It lowers the pitch by 3 semitones and adds a large reverb to all system audio live. Live audio can&#x27;t play slower without falling behind, so the timing stays in sync with the video while it sounds slowed.</p></details>
-<details><summary><h3>Is there a free bass booster and volume booster for Mac?</h3></summary><p>Yes. CallGuard boosts all Mac audio up to 300% and bass up to +12 dB, with a limiter that holds peaks at −1 dBFS so it never clips. <strong>Studio Master</strong> adds harmonic bass, so small earbuds and laptop speakers can <em>sound</em> deep, plus clearer vocals and airy highs. It&#x27;s free under the MIT license.</p></details>
-<details><summary><h3>Which call apps work with No Ducking?</h3></summary><p>Verified with <strong>WhatsApp</strong> for Mac. It should work with any app that follows the system output device (FaceTime, Zoom, Teams, Google Meet in a browser, Discord, Telegram…), but these haven&#x27;t been tested yet. If an app doesn&#x27;t move, CallGuard falls back to extra gain automatically. Please <a href="https://github.com/notshevvv/CallGuard/issues/new?template=call-app-report.md">report what you find</a>.</p></details>
-<details><summary><h3>Why does my Sound menu say &quot;MacBook Speakers&quot; during a call?</h3></summary><p>That&#x27;s the decoy. The speakers are hardware-muted and your audio is on your earbuds. Volume keys still control the earbuds, and the output switches back on its own when the call ends.</p></details>
-<details><summary><h3>Does No Ducking work on the Mac&#x27;s own speakers?</h3></summary><p>No, because the speakers <em>are</em> the decoy. Use earbuds, headphones or another output. On the speakers, CallGuard uses the extra-gain fallback instead.</p></details>
-<details><summary><h3>What happens if CallGuard crashes during a call?</h3></summary><p>The decoy speakers stay muted, so you get silence rather than a loud laptop in the night. Reopen CallGuard and it restores everything. Since 3.1 it also only uses the decoy after it has heard real audio, and a silence guard hands the call back to your earbuds if capture ever stops.</p></details>
-<details><summary><h3>Does CallGuard record my audio or send data anywhere?</h3></summary><p>No. CallGuard has no network code and no analytics. Audio stays in memory for a few milliseconds while it is processed, then goes straight to your output. Nothing is recorded or saved.</p></details>
-<details><summary><h3>Is there an iPhone or Windows version?</h3></summary><p>No iPhone version: iOS doesn&#x27;t let apps mute other apps&#x27; mics or process other apps&#x27; sound. On Windows, most of this is built in. See <strong><a href="https://github.com/notshevvv/CallGuard/blob/main/WINDOWS.md">WINDOWS.md</a></strong>, which includes one-click registry files to turn call ducking off.</p></details>
+<div class="featbar wrap" aria-label="Features">
+    <div class="glass" id="bar">
+      <span class="lens" id="lens" aria-hidden="true"></span>
+      <a class="feat" href="#ducking" data-c="var(--blue)">No Ducking</a>
+      <a class="feat" href="#micl" data-c="var(--red)">Mic Lock</a>
+      <a class="feat" href="#hifi" data-c="var(--violet)">Hi-Fi Buds</a>
+      <a class="feat" href="#studio" data-c="var(--gold)">Studio Master</a>
+      <a class="feat" href="#effects" data-c="var(--pink)">Effects</a>
+      <a class="feat" href="#eightd" data-c="var(--teal)">8D Audio</a>
+      <a class="feat" href="#sleep" data-c="var(--peri)">Sleep</a>
+    </div>
+  </div>
+
+<section class="band" id="ducking" data-i="0" style="--c:var(--blue)" aria-labelledby="h-duck">
+  <div class="wrap cols">
+    <div class="copy rise">
+      <div class="tag"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></i>No Ducking</div>
+      <h2 id="h-duck">Your music stays loud on calls.</h2>
+      <p>The second a call starts, macOS drops YouTube and Spotify to a whisper. It's called <strong>ducking</strong>, and only the call app can change it. There is no switch for you.</p>
+      <p>CallGuard moves the call onto the Mac's speakers, muted in hardware, so the ducking lands where nobody is listening. Everything you hear is then played to your earbuds from a copy taken before the drop.</p>
+      <ul class="facts">
+        <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Volume keys keep working, and everything switches back when the call ends.</li>
+        <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Verified with WhatsApp. Needs earbuds or headphones.</li>
+      </ul>
+    </div>
+    <div class="pane glass rise later" aria-hidden="true">
+      <p class="live"><i></i>Call in progress</p>
+      <div class="meters">
+        <div class="mrow"><span class="lab">macOS alone</span><span class="track"><i id="duck-mac" style="--w:84%"></i></span><span class="db num" id="duck-mac-db">0 dB</span></div>
+        <div class="mrow"><span class="lab">With CallGuard</span><span class="track"><i style="--w:84%"></i></span><span class="db num">0 dB</span></div>
+      </div>
+      <p class="readout" style="margin-top:26px">Measured: the call engine's own setting moves other audio by <b class="num">19 dB</b>.</p>
+    </div>
+  </div>
 </section>
 
-<section>
-<h2>How it works</h2>
-<p>CallGuard uses Apple's public Core Audio process taps (macOS 14.2+) and a private aggregate device, so it needs no virtual audio driver. Full technical write-up and measurements: <a href="https://github.com/notshevvv/CallGuard/blob/main/docs/how-it-works.md">How CallGuard works</a>. On Windows? See the <a href="https://github.com/notshevvv/CallGuard/blob/main/WINDOWS.md">Windows guide</a>.</p>
+<section class="band" id="micl" data-i="1" style="--c:var(--red)" aria-labelledby="h-mic">
+  <div class="wrap cols flip">
+    <div class="copy rise">
+      <div class="tag"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 9.3V6a3 3 0 0 0-5.7-1.3M9 9v2a3 3 0 0 0 4.6 2.5M5 11a7 7 0 0 0 11.2 5.6M19 11a7 7 0 0 1-.6 2.8M12 18v3M3 3l18 18"/></svg></i>Mic Lock</div>
+      <h2 id="h-mic">An earbud tap can't unmute you.</h2>
+      <p>Roll over in your sleep, an earbud registers a tap, and suddenly you're unmuted. <strong>Mic Lock</strong> mutes the microphone at the hardware level, so every app gets digital silence whatever its own mute button says. If anything un-mutes it, CallGuard puts it back within milliseconds and counts it.</p>
+      <ul class="facts">
+        <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>One click on the red <strong>LOCKED</strong> menu bar icon unmutes you.</li>
+        <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Hold <span class="kbd">⌃⌥T</span> to talk while locked. <span class="kbd">⌃⌥M</span> locks from anywhere.</li>
+        <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Locks itself when you go quiet on a call, and unlocks when the call ends.</li>
+      </ul>
+    </div>
+    <div class="pane glass rise later">
+      <div class="readings">
+        <div class="reading"><div class="v num">0</div><div class="k">non-zero samples an app records while Mic Lock is on</div></div>
+        <div class="reading"><div class="v num">−64</div><div class="k">dBFS still leaks with input volume at zero, which is why CallGuard uses hardware mute</div></div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<footer>CallGuard is free and open source (MIT) · <a href="https://github.com/notshevvv/CallGuard">github.com/notshevvv/CallGuard</a></footer>
+<section class="band" id="hifi" data-i="2" style="--c:var(--violet)" aria-labelledby="h-hifi">
+  <div class="wrap cols">
+    <div class="copy rise">
+      <div class="tag"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h1V4H7zM8 12v7a1.5 1.5 0 0 0 3 0V8M17 4a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-1V4h1zM16 12v7a1.5 1.5 0 0 1-3 0V8"/></svg></i>Hi-Fi Buds</div>
+      <h2 id="h-hifi">No more phone-line sound.</h2>
+      <p>When a call uses your earbuds' mic, Bluetooth drops them into headset mode: <strong>16 kHz, mono</strong>, like an old phone line. <strong>Hi-Fi Buds</strong> makes calls use the Mac's built-in mic instead, so your earbuds stay in stereo hi-fi.</p>
+    </div>
+    <div class="pane glass rise later" aria-hidden="true">
+      <div class="spec-row"><div class="lab readout"><span>Headset mode</span><b class="num">16 kHz · mono</b></div><div class="spec muffled" id="spec-a"></div></div>
+      <div class="spec-row"><div class="lab readout"><span>Hi-Fi Buds</span><b class="num">44.1 kHz · stereo</b></div><div class="spec" id="spec-b"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="studio" data-i="3" style="--c:var(--gold)" aria-labelledby="h-studio">
+  <div class="wrap cols flip">
+    <div class="copy rise">
+      <div class="tag"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"/></svg></i>Studio Master</div>
+      <h2 id="h-studio">Premium sound from any earbuds.</h2>
+      <p>One switch. <strong>Harmonic bass</strong> adds the overtones of every bass note, so small earbuds and laptop speakers let you <em>hear</em> deep bass. The low end is tightened and centred, boxiness is dipped, vocals get presence and the highs get air.</p>
+      <ul class="facts">
+        <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>One Intensity control: Subtle, Rich or Max.</li>
+        <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Volume to 300% and bass to +12 dB, with a limiter that never clips.</li>
+      </ul>
+    </div>
+    <div class="pane glass rise later" aria-hidden="true">
+      <div class="lvls" id="lvls"><span class="lvl"><i></i></span><span class="lvl"><i></i></span><span class="lvl"><i></i></span><span class="lvl"><i></i></span><span class="lvl"><i></i></span><span class="lvl"><i></i></span><span class="lvl"><i></i></span><span class="lvl"><i></i></span></div>
+      <div class="eq">
+        <svg viewBox="0 0 400 130">
+          <defs><linearGradient id="eqfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc759" stop-opacity=".45"/><stop offset="1" stop-color="#ffc759" stop-opacity="0"/></linearGradient></defs>
+          <path class="flat" d="M0 74 H400"/>
+          <path class="fill" d="M0 108 C 18 82, 30 58, 52 56 C 80 54, 96 70, 120 74 C 140 78, 150 82, 168 80 C 196 76, 230 72, 280 70 C 320 66, 350 50, 400 46 V130 H0Z"/>
+          <path class="curve" d="M0 108 C 18 82, 30 58, 52 56 C 80 54, 96 70, 120 74 C 140 78, 150 82, 168 80 C 196 76, 230 72, 280 70 C 320 66, 350 50, 400 46"/>
+          <text x="8" y="124">rumble cut</text><text x="34" y="44">harmonic bass</text><text x="134" y="102">de-mud</text><text x="350" y="36">air</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="effects" data-i="4" style="--c:var(--pink)" aria-labelledby="h-fx">
+  <div class="wrap cols">
+    <div class="copy rise">
+      <div class="tag"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h2M7 8v8M11 5v14M15 9v6M19 7v10M21 12h0"/></svg></i>Effects</div>
+      <h2 id="h-fx">Slowed + reverb, live, on anything.</h2>
+      <p>One-tap presets for every app: <strong>Slowed + Reverb, Sped Up, Ambience, Harmony</strong> and <strong>Dreamy</strong>, with fine controls for pitch, reverb, room size, harmony and stereo width. Live audio can't play slower without falling behind, so Slowed lowers the pitch and keeps the timing in sync with the video.</p>
+    </div>
+    <div class="pane glass rise later">
+      <div class="chips" role="group" aria-label="Try a preset">
+        <button class="chip" type="button" aria-pressed="true" data-p="-3,40,85">Slowed + Reverb</button>
+        <button class="chip" type="button" aria-pressed="false" data-p="3,0,50">Sped Up</button>
+        <button class="chip" type="button" aria-pressed="false" data-p="0,28,60">Ambience</button>
+        <button class="chip" type="button" aria-pressed="false" data-p="0,18,55">Harmony</button>
+        <button class="chip" type="button" aria-pressed="false" data-p="-2,55,92">Dreamy</button>
+      </div>
+      <div class="sliders" aria-live="polite">
+        <div class="srow"><span>Pitch</span><span class="track"><i id="s-pitch"></i></span><span class="v num" id="v-pitch">−3.0</span></div>
+        <div class="srow"><span>Reverb</span><span class="track"><i id="s-rev"></i></span><span class="v num" id="v-rev">40%</span></div>
+        <div class="srow"><span>Room</span><span class="track"><i id="s-room"></i></span><span class="v" id="v-room">Huge</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="eightd" data-i="5" style="--c:var(--teal)" aria-labelledby="h-8d">
+  <div class="wrap cols flip">
+    <div class="copy rise">
+      <div class="tag"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-20 12 12)"/><circle cx="20" cy="9" r="1.4" fill="currentColor"/></svg></i>8D Audio</div>
+      <h2 id="h-8d">The music circles your head.</h2>
+      <p>Front, right, behind you, left. CallGuard uses the cues your brain uses to place a sound. It's louder in the near ear, arrives a fraction of a millisecond later in the far ear, and sounds duller behind your head. It has its own on/off switch and a speed control.</p>
+      <ul class="facts"><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Wear earphones. The call voice always stays in the middle.</li></ul>
+    </div>
+    <div class="pane glass rise later" aria-hidden="true">
+      <div class="orbit">
+        <svg viewBox="0 0 400 400">
+          <circle class="ring" cx="200" cy="200" r="150"/><circle class="ring" cx="200" cy="200" r="100" opacity=".55"/>
+          <g fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.75)" stroke-width="2.5">
+            <ellipse cx="200" cy="200" rx="44" ry="52"/>
+            <path d="M156 194 q-12 4 -10 18 q2 10 12 8" fill="none"/><path d="M244 194 q12 4 10 18 q-2 10 -12 8" fill="none"/>
+            <path d="M190 150 l10 -10 l10 10" fill="none"/>
+          </g>
+          <g font-family="JetBrains Mono" font-size="12" fill="#cfc8ee"><text x="200" y="38" text-anchor="middle">FRONT</text><text x="200" y="378" text-anchor="middle">BEHIND</text><text x="20" y="204">L</text><text x="372" y="204">R</text></g>
+          <g class="src" id="src"><circle cx="200" cy="50" r="28" fill="#2ed9d9" opacity=".22"/><circle cx="200" cy="50" r="13" fill="#bff7f7"/></g>
+        </svg>
+      </div>
+      <div class="ears">
+        <div><span class="track"><i id="ear-l" style="--w:50%"></i></span><div class="readout">Left ear</div></div>
+        <div><span class="track"><i id="ear-r" style="--w:50%"></i></span><div class="readout" style="text-align:right">Right ear</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="sleep" data-i="6" style="--c:var(--peri)" aria-labelledby="h-sleep">
+  <div class="wrap cols">
+    <div class="copy rise">
+      <div class="tag"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></i>Sleep</div>
+      <h2 id="h-sleep">Made for falling asleep.</h2>
+      <p>A sleep timer fades the music while the call voice stays. Night Mode evens out sudden loud bits, so an ad or an explosion doesn't wake you. And if you go quiet, the mic locks itself.</p>
+    </div>
+    <div class="pane glass night rise later">
+      <ol id="night">
+        <li><span class="t num">10:40 pm</span><span class="pip"></span><span class="what"><b>Call starts</b><span>Ducking dodged. Music at full volume.</span></span></li>
+        <li><span class="t num">12:15 am</span><span class="pip"></span><span class="what"><b>You drift off</b><span>20 quiet minutes, so the mic locks itself.</span></span></li>
+        <li><span class="t num">12:45 am</span><span class="pip"></span><span class="what"><b>Sleep timer</b><span>The music fades. Their voice stays.</span></span></li>
+        <li><span class="t num">3:12 am</span><span class="pip"></span><span class="what"><b>Earbud tap</b><span>Unmute blocked. You stay muted.</span></span></li>
+        <li><span class="t num">7:30 am</span><span class="pip"></span><span class="what"><b>Call ends</b><span>Mic unlocks. Sound back to normal.</span></span></li>
+      </ol>
+      <p class="readout" style="margin:8px 0 0">An example night, not a log.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="proof" style="--c:#ffffff" aria-labelledby="h-read">
+  <div class="wrap">
+    <h2 id="h-read" class="rise">Measured, not promised.</h2>
+    <div class="readings four rise later">
+      <div class="reading glass"><div class="v num">0</div><div class="k">non-zero samples recorded while Mic Lock is on</div></div>
+      <div class="reading glass"><div class="v num">19 dB</div><div class="k">of ducking between the call engine's minimum and default</div></div>
+      <div class="reading glass"><div class="v num">−1.0</div><div class="k">dBFS ceiling, held with every effect maxed at once</div></div>
+      <div class="reading glass"><div class="v num">0.0%</div><div class="k">CPU when idle; about 0.6% of one core while running</div></div>
+    </div>
+    <p class="fine rise later" style="margin-top:20px">No drivers, no analytics, nothing recorded. Built on Apple's public Core Audio process taps. Full write-up: <a href="https://github.com/notshevvv/CallGuard/blob/main/docs/how-it-works.md">how CallGuard works</a>.</p>
+  </div>
+</section>
+
+<section class="band" id="faq" aria-labelledby="h-faq">
+  <div class="wrap faq">
+    <h2 id="h-faq">Questions people ask</h2>
+    <details><summary><h3>How do I stop my Mac lowering the volume of music and videos during calls?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>macOS turns other audio down ("ducks" it) whenever a call app runs its voice processing, and there is no setting to switch it off. CallGuard's <strong>No Ducking</strong> fixes it: during a call it points the call app at the Mac's speakers, muted in hardware, and plays everything to your earbuds from a copy taken before the volume drop.</p></details>
+<details><summary><h3>Why does my music sound muffled on calls with Bluetooth earbuds or AirPods on a Mac?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>When a call app uses the earbuds' microphone, Bluetooth switches them into headset mode, which is 16 kHz mono and sounds like an old phone line. CallGuard's <strong>Hi-Fi Buds</strong> makes calls use the Mac's built-in mic instead, so the earbuds stay in stereo (44.1–48 kHz) high quality.</p></details>
+<details><summary><h3>How do I stop my earbuds or AirPods unmuting me on a WhatsApp call?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>Tapping an earbud can toggle the call app's mute button, for example while you sleep. CallGuard's <strong>Mic Lock</strong> mutes every microphone at the hardware level, so apps receive digital silence whatever their own button says. It re-mutes within milliseconds if anything unmutes it. Click the red LOCKED icon to talk again.</p></details>
+<details><summary><h3>Can a Mac app block the microphone for just one app?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>No. macOS doesn't let one app block another app's microphone without resetting privacy permissions. Mic Lock mutes the microphones themselves, so while it's on no app can hear you. Push-to-talk (hold ⌃⌥T) and the one-click unmute let you speak when you need to.</p></details>
+<details><summary><h3>How do I get 8D audio on a Mac for any song?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>Turn on CallGuard's <strong>8D Audio</strong> and wear earphones. It makes any app's sound, such as Spotify, YouTube or Apple Music, circle your head, using equal-power panning, a small delay between the ears and head-shadow filtering. A Speed slider sets one turn every 5–18 seconds.</p></details>
+<details><summary><h3>How do I play Spotify or YouTube slowed + reverb on a Mac?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>Choose the <strong>Slowed + Reverb</strong> preset in CallGuard's Effects. It lowers the pitch by 3 semitones and adds a large reverb to all system audio live. Live audio can't play slower without falling behind, so the timing stays in sync with the video while it sounds slowed.</p></details>
+<details><summary><h3>Is there a free bass booster and volume booster for Mac?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>Yes. CallGuard boosts all Mac audio up to 300% and bass up to +12 dB, with a limiter that holds peaks at −1 dBFS so it never clips. <strong>Studio Master</strong> adds harmonic bass, so small earbuds and laptop speakers can <em>sound</em> deep, plus clearer vocals and airy highs. It's free under the MIT license.</p></details>
+<details><summary><h3>Which call apps work with No Ducking?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>Verified with <strong>WhatsApp</strong> for Mac. It should work with any app that follows the system output device (FaceTime, Zoom, Teams, Google Meet in a browser, Discord, Telegram…), but these haven't been tested yet. If an app doesn't move, CallGuard falls back to extra gain automatically. Please <a href="https://github.com/notshevvv/CallGuard/issues/new?template=call-app-report.md">report what you find</a>.</p></details>
+<details><summary><h3>Why does my Sound menu say &quot;MacBook Speakers&quot; during a call?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>That's the decoy. The speakers are hardware-muted and your audio is on your earbuds. Volume keys still control the earbuds, and the output switches back on its own when the call ends.</p></details>
+<details><summary><h3>Does No Ducking work on the Mac&#x27;s own speakers?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>No, because the speakers <em>are</em> the decoy. Use earbuds, headphones or another output. On the speakers, CallGuard uses the extra-gain fallback instead.</p></details>
+<details><summary><h3>What happens if CallGuard crashes during a call?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>The decoy speakers stay muted, so you get silence rather than a loud laptop in the night. Reopen CallGuard and it restores everything. Since 3.1 it also only uses the decoy after it has heard real audio, and a silence guard hands the call back to your earbuds if capture ever stops.</p></details>
+<details><summary><h3>Does CallGuard record my audio or send data anywhere?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>No. CallGuard has no network code and no analytics. Audio stays in memory for a few milliseconds while it is processed, then goes straight to your output. Nothing is recorded or saved.</p></details>
+<details><summary><h3>Is there an iPhone or Windows version?</h3><span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></summary><p>No iPhone version: iOS doesn't let apps mute other apps' mics or process other apps' sound. On Windows, most of this is built in. See <strong><a href="https://github.com/notshevvv/CallGuard/blob/main/WINDOWS.md">WINDOWS.md</a></strong>, which includes one-click registry files to turn call ducking off.</p></details>
+  </div>
+</section>
+
+<section class="signoff" aria-labelledby="h-end">
+  <div class="wrap">
+    <div class="glass">
+      <h2 id="h-end">Stay on the call. Sleep easy.</h2>
+      <p class="lede">Free and open source, made for good will. macOS 14.4 or later.</p>
+      <div class="ctas">
+        <a class="btn primary" href="https://github.com/notshevvv/CallGuard/releases/latest"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.73-1.35-.14-2.64.8-3.33.8-.7 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.1 8.79.74 1.06 1.61 2.25 2.75 2.2 1.11-.04 1.52-.71 2.86-.71 1.33 0 1.71.71 2.88.69 1.19-.02 1.94-1.08 2.66-2.15.84-1.23 1.19-2.43 1.2-2.49-.03-.01-2.3-.88-2.33-3.52zM14.2 6.13c.6-.74 1.01-1.75.9-2.77-.87.04-1.94.59-2.56 1.32-.56.64-1.05 1.68-.92 2.67.97.08 1.97-.49 2.58-1.22z"/></svg>Download for Mac</a>
+        <a class="btn clear" href="https://github.com/notshevvv/CallGuard"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>View on GitHub</a>
+      </div>
+      <p class="fine">First launch: System Settings → Privacy &amp; Security → Open Anyway (the app isn't notarized yet).</p>
+    </div>
+  </div>
+</section>
 </main>
+
+<footer>
+  <div class="wrap">
+    <span>CallGuard · MIT license · made for good will</span>
+    <nav aria-label="Footer">
+      <a href="https://github.com/notshevvv/CallGuard/blob/main/docs/how-it-works.md">How it works</a>
+      <a href="https://github.com/notshevvv/CallGuard/blob/main/WINDOWS.md">Windows guide</a>
+      <a href="https://github.com/notshevvv/CallGuard/releases">Releases</a>
+      <a href="llms.txt">llms.txt</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(() => {
+  document.documentElement.classList.add('js');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Mic Lock demo: flips the whole page between live and locked
+  const tile = document.getElementById('mictile');
+  tile.addEventListener('click', () => {
+    const locked = document.body.classList.toggle('locked');
+    tile.setAttribute('aria-pressed', String(locked));
+    tile.querySelector('.disc').innerHTML = locked ? "<svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 9.3V6a3 3 0 0 0-5.7-1.3M9 9v2a3 3 0 0 0 4.6 2.5M5 11a7 7 0 0 0 11.2 5.6M19 11a7 7 0 0 1-.6 2.8M12 18v3M3 3l18 18\"/></svg>" : "<svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5 11a7 7 0 0 0 14 0M12 18v3\"/></svg>";
+  });
+
+  // The glass lens slides along the feature bar to the section you're reading
+  const feats = [...document.querySelectorAll('.feat')];
+  const lens = document.getElementById('lens'), bar = document.getElementById('bar');
+  let current = -1;
+  const moveLens = (i) => {
+    if (i < 0) { lens.style.width = '0px'; feats.forEach((f) => f.classList.remove('on')); return; }
+    const f = feats[i], b = bar.getBoundingClientRect(), r = f.getBoundingClientRect();
+    lens.style.setProperty('--x', (r.left - b.left + bar.scrollLeft) + 'px');
+    lens.style.width = r.width + 'px';
+    lens.style.setProperty('--c', f.dataset.c);
+    feats.forEach((el, j) => el.classList.toggle('on', j === i));
+    if (bar.scrollWidth > bar.clientWidth) bar.scrollTo({ left: r.left - b.left + bar.scrollLeft - 40, behavior: reduce ? 'auto' : 'smooth' });
+  };
+  addEventListener('resize', () => moveLens(current));
+
+  const runOnce = {
+    ducking() {
+      const bar = document.getElementById('duck-mac'), db = document.getElementById('duck-mac-db');
+      setTimeout(() => { bar.style.setProperty('--w', '18%'); db.textContent = '−19 dB'; }, reduce ? 0 : 700);
+    },
+    sleep() {
+      document.querySelectorAll('#night li').forEach((li, i) => setTimeout(() => li.classList.add('lit'), reduce ? 0 : 400 + i * 450));
+    }
+  };
+  const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    const sec = e.target; sec.classList.add('tuned');
+    if (sec.dataset.i !== undefined) { current = +sec.dataset.i; moveLens(current); }
+    else if (sec.id === 'proof' || sec.id === 'faq') { current = -1; moveLens(-1); }
+    if (runOnce[sec.id]) { runOnce[sec.id](); delete runOnce[sec.id]; }
+  }), { rootMargin: '-30% 0px -50% 0px' });
+  document.querySelectorAll('.band').forEach((b) => io.observe(b));
+
+  // Hi-Fi spectrum
+  const heights = [60,72,80,88,82,74,78,70,74,66,62,58,56,52,48,52,46,42,38,32,28,24];
+  ['spec-a','spec-b'].forEach((id) => { document.getElementById(id).innerHTML = heights.map((h) => `<span style="--h:${h}%"></span>`).join(''); });
+
+  // Effects presets
+  const chips = [...document.querySelectorAll('.chip')];
+  const setPreset = (btn) => {
+    chips.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    const [p, r, m] = btn.dataset.p.split(',').map(Number);
+    document.getElementById('s-pitch').style.setProperty('--w', ((p + 6) / 12 * 100) + '%');
+    document.getElementById('s-rev').style.setProperty('--w', r + '%');
+    document.getElementById('s-room').style.setProperty('--w', m + '%');
+    document.getElementById('v-pitch').textContent = p === 0 ? '0' : (p > 0 ? '+' : '−') + Math.abs(p).toFixed(1);
+    document.getElementById('v-rev').textContent = r + '%';
+    document.getElementById('v-room').textContent = m < 34 ? 'Small' : m < 70 ? 'Hall' : 'Huge';
+  };
+  chips.forEach((b) => b.addEventListener('click', () => setPreset(b)));
+  setPreset(chips[0]);
+
+  // Live loops, only while on screen
+  const lv = [...document.querySelectorAll('#lvls i')];
+  const src = document.getElementById('src'), earL = document.getElementById('ear-l'), earR = document.getElementById('ear-r');
+  const vis = new Set();
+  const vo = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting ? vis.add(e.target.id) : vis.delete(e.target.id)));
+  ['studio', 'eightd'].forEach((id) => vo.observe(document.getElementById(id)));
+  const sm = lv.map(() => .4);
+  const t0 = performance.now();
+  const frame = (now) => {
+    const t = (now - t0) / 1000;
+    if (vis.has('studio') && !reduce) {
+      const beat = Math.pow(Math.max(0, Math.sin(t * Math.PI * 2 * 1.05)), 6);
+      lv.forEach((el, i) => {
+        const band = i / (lv.length - 1);
+        const target = .3 + (1 - band) * .45 * beat + .14 * Math.abs(Math.sin(t * (3 + i * .7) + i)) + band * .12;
+        sm[i] += (target - sm[i]) * .2;
+        el.style.setProperty('--v', Math.min(.98, sm[i]) * 100 + '%');
+      });
+    }
+    if (vis.has('eightd')) {
+      const a = reduce ? Math.PI / 3 : t * (Math.PI * 2 / 8);
+      src.style.transform = `rotate(${a}rad)`;
+      const x = Math.sin(a);
+      earL.style.setProperty('--w', (50 - x * 42) + '%');
+      earR.style.setProperty('--w', (50 + x * 42) + '%');
+    }
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+})();
+</script>
 </body>
 </html>

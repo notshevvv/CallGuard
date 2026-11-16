@@ -1,0 +1,122 @@
+{
+  "title": "Choose the world for the CallGuard website",
+  "question": "The roll dealt the Planisphere: the page is a star-finder wheel you turn through one night on a call. Keep it, take an alternate, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "kind": "assigned",
+      "label": "The Planisphere",
+      "kicker": "THE ROLL",
+      "lineage": "printed star-finder wheels: a rotating sky disc under an oval horizon window, rimmed by hour and date scales",
+      "thesis": "One night on a call, read off a star wheel. You turn the hour ring from 10 pm to 7 am, and each hour shows what CallGuard does at that moment of the night.",
+      "palette": ["#0B1033", "#E9EEFF", "#7FD6E8", "#F2B84B", "#E5484D"],
+      "materials": ["printed star disc", "riveted rotating wheel", "engraved hour and date scales", "oval horizon window"],
+      "viewport": "Full-width wheel cropped by the viewport. The oval window shows tonight's sky with CallGuard set large across it. The hour ring reads 10:00 PM at the pointer, and the Download for Mac button is set on the wheel's centre rivet plate, with View on GitHub beside it.",
+      "risk": "Night-sky pages slide into 'near-black with glowing edges'. It must stay a printed instrument, with ink, tick marks and typeset numerals, and no neon.",
+      "raised": [
+        {"from": "challenger-miura", "raise": "One switch moves the whole sheet: flipping Mic Lock on the wheel turns every 'live' mark across the page to its locked state."},
+        {"from": "challenger-detector", "raise": "Every measured claim sits on the ring scales as an instrument reading in tabular figures (−64 dBFS leak at volume 0, 19 dB of ducking, 0.0% CPU idle)."},
+        {"from": "challenger-artpaul", "raise": "One spot colour per hour of the night; everything else stays in the wheel's two inks."}
+      ]
+    },
+    {
+      "id": "model-pick",
+      "kind": "pick",
+      "label": "On Air",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "late-night radio studios: the red ON AIR lamp, the backlit FM dial, the presenter's mic fader",
+      "thesis": "Your mic is a broadcast. The ON AIR lamp is Mic Lock, and the glowing dial tunes the sound features.",
+      "palette": ["#2A1A12", "#FFB547", "#E5332A", "#F3E3C3", "#101010"],
+      "materials": ["walnut console", "backlit dial glass", "lamp housing", "brushed fader caps"],
+      "viewport": "A dark studio console across the viewport, a lit ON AIR lamp over the CallGuard name, the FM dial running underneath as the feature index, and the Download button as the console's big key.",
+      "risk": "Familiar retro-radio territory, the direction most runs in this category land on, and it can read as nostalgia rather than a modern Mac app."
+    },
+    {
+      "id": "challenger-glazier",
+      "kind": "challenger",
+      "catalogId": "craft-making-glazier-colorfield-partition",
+      "label": "Glazier's Partition",
+      "verdict": "competitive",
+      "lineage": "steel-framed glass partition walls",
+      "thesis": "Each feature is one pane in a black glazing grid; the pane you reach lights up in its own glass colour, echoing the app's Liquid Glass panel.",
+      "palette": ["#111111", "#E8EEF0", "#1F4FD8", "#F2A33A", "#7A1F2B"],
+      "materials": ["black glazing bars", "seeded white glass", "cobalt, amber and oxblood panes"],
+      "viewport": "A glazing wall across the viewport, the CallGuard name in one big pane, Download in the lit cobalt pane.",
+      "case": "Fuses cleanly: features map to panes and the active pane matches the app's glass. It wins on product clarity but loses on audience identification, because nothing in it says 'night on a call'.",
+      "risk": "Can feel like architecture rather than a bedtime companion.",
+      "hero": "https://impeccable.style/worlds/cards/craft-making-glazier-colorfield-partition-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/craft-making-glazier-colorfield-partition.webp"
+    },
+    {
+      "id": "challenger-miura",
+      "kind": "challenger",
+      "catalogId": "paper-folds-pleats-deployable-miura-orbit-sheet",
+      "label": "Miura-fold Sheet",
+      "verdict": "declined",
+      "lineage": "deployable Miura-fold sheets",
+      "palette": ["#FFFFFF", "#C9A227", "#8A8580", "#9CC3E6"],
+      "materials": ["scored sheet", "gold foil packet"],
+      "case": "Fuses poorly: neither the sleepy caller nor the feature list reads in a crease graph.",
+      "kept": "One control propagates across the whole sheet."
+    },
+    {
+      "id": "challenger-detector",
+      "kind": "challenger",
+      "catalogId": "scientific-notation-particle-detector-event-display",
+      "label": "Collider Event Display",
+      "verdict": "declined",
+      "lineage": "particle detector event displays",
+      "palette": ["#05070D", "#5B7A99", "#F5D90A", "#3FD0E0", "#E0362C"],
+      "materials": ["vacuum ground", "detector rings"],
+      "case": "Fuses poorly: lab spectacle, wrong audience; only the 8D orbit maps.",
+      "kept": "Measurements as instrument readings in tabular digits."
+    },
+    {
+      "id": "challenger-artpaul",
+      "kind": "challenger",
+      "catalogId": "brand-identity-canon-art-paul-magazine-program",
+      "label": "Mid-century Magazine Program",
+      "verdict": "declined",
+      "lineage": "mid-century magazine identity",
+      "palette": ["#111111", "#FFFFFF", "#D2232A"],
+      "materials": ["coated stock", "spot colour"],
+      "case": "Fuses poorly: an editorial program says nothing about calls or sleep.",
+      "kept": "One spot colour per issue, with total discipline."
+    },
+    {
+      "id": "challenger-posada",
+      "kind": "challenger",
+      "catalogId": "posters-covers-sleeves-posada-calavera-broadside",
+      "label": "Calavera Broadside",
+      "verdict": "declined",
+      "lineage": "penny-press broadsides",
+      "palette": ["#EDE6D6", "#141414", "#D7262E"],
+      "materials": ["newsprint", "relief engraving"],
+      "case": "Fuses poorly: skeletons and shouting type fight a calm bedtime app.",
+      "kept": "The image band carries the section; the text is set hard beneath it."
+    },
+    {
+      "id": "challenger-riso",
+      "kind": "challenger",
+      "catalogId": "risograph-web-system",
+      "label": "Risograph System",
+      "verdict": "declined",
+      "lineage": "Riso spot-ink printing",
+      "palette": ["#F4EFE6", "#FF48B0", "#0078BF", "#FFE800"],
+      "materials": ["toothy paper", "fluorescent inks"],
+      "case": "Fuses poorly: a daylight zine on paper, the opposite of a night-time call.",
+      "kept": "Two or three inks, total commitment."
+    }
+  ],
+  "reroll": {"registers": ["safer", "bolder"]},
+  "canon": true,
+  "canonCard": {
+    "kind": "canon",
+    "label": "The category standard",
+    "thesis": "A polished Mac app product page, executed impeccably: big headline, product screenshot, feature sections, download button.",
+    "palette": ["#FFFFFF", "#111111", "#0A84FF"],
+    "materials": ["clean grid", "app screenshots"],
+    "viewport": "Centred headline and Download button over the real panel screenshot.",
+    "risk": "Looks like every other Mac utility page; nothing says 'all-night call companion'."
+  }
+}
