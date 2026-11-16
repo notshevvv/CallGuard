@@ -44,6 +44,13 @@ final class AppState: ObservableObject {
         if oldValue != studioOn { log("sparkles", studioOn ? "Studio Master on" : "Studio Master off") } } }
     @Published var studioAmount: Double = 70 { didSet { guard !isDemo else { return }; d.set(studioAmount, forKey: "studio.amount"); syncEngine() } }
 
+    // MARK: 8D audio (saved)
+    @Published var eightDOn = false { didSet { guard !isDemo else { return }; d.set(eightDOn, forKey: "8d.on"); syncEngine()
+        if oldValue != eightDOn { log("arrow.triangle.2.circlepath", eightDOn ? "8D audio on" : "8D audio off") } } }
+    @Published var eightDSpeed: Double = 50 { didSet { guard !isDemo else { return }; d.set(eightDSpeed, forKey: "8d.speed"); syncEngine() } }   // 0 slow … 100 fast
+    /// Seconds per full circle: slow 18 s … fast 5 s.
+    var eightDSeconds: Double { 18 - 13 * eightDSpeed / 100 }
+
     // MARK: effects (saved)
     @Published var fxOn = false { didSet { guard !isDemo else { return }; d.set(fxOn, forKey: "fx.on"); syncEngine() } }
     @Published var fxPitch: Double = 0 { didSet { saveFX() } }        // semitones
@@ -133,6 +140,8 @@ final class AppState: ObservableObject {
         callExtra = d.object(forKey: "call.extra") as? Double ?? 10
         fxOn = d.bool(forKey: "fx.on")
         studioOn = d.bool(forKey: "studio.on")
+        eightDOn = d.bool(forKey: "8d.on")
+        eightDSpeed = d.object(forKey: "8d.speed") as? Double ?? 50
         studioAmount = d.object(forKey: "studio.amount") as? Double ?? 70
         fxPitch = d.object(forKey: "fx.pitch") as? Double ?? 0
         fxReverb = d.object(forKey: "fx.reverb") as? Double ?? 0
@@ -196,6 +205,8 @@ final class AppState: ObservableObject {
         engine.callBoostDB = callExtra
         engine.fxOn = fxOn
         engine.studioOn = studioOn
+        engine.eightDOn = eightDOn
+        engine.eightDSeconds = eightDSeconds
         engine.studioAmount = studioAmount
         engine.fxSemitones = fxPitch
         engine.fxReverb = fxReverb
@@ -205,7 +216,7 @@ final class AppState: ObservableObject {
         engine.fxWarmth = fxWarmth
         engine.mediaFade = mediaFaded ? 0 : 1
         engine.stopDucking = stopDucking
-        engine.setOn(stopDucking || boostOn || night || sleepActive || fxOn || studioOn)
+        engine.setOn(stopDucking || boostOn || night || sleepActive || fxOn || studioOn || eightDOn)
         changed()
     }
 
@@ -330,6 +341,7 @@ final class AppState: ObservableObject {
         s.micLocked = true; s.stopDucking = true; s.hifiOn = true; s.boostOn = true
         s.gain = 180; s.bass = 6; s.night = true; s.callVolume = 100
         s.studioOn = true; s.studioAmount = 70
+        s.eightDOn = true; s.eightDSpeed = 50
         s.fxOn = true; s.fxPitch = -3; s.fxReverb = 40; s.fxRoom = 85; s.fxHarmony = 0; s.fxWidth = 120; s.fxPreset = "Slowed + Reverb"
         s.autoLockMinutes = 20; s.autoUnlock = true
         s.sleepMinutes = 30; s.sleepEndsAt = Date().addingTimeInterval(23 * 60 + 41)

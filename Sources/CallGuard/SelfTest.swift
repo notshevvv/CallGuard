@@ -84,6 +84,32 @@ enum SelfTest {
         return Float(20 * log10(max(2 * sqrt(max(p, 0)) / Double(x.count), 1e-9)))
     }
 
+
+    /// Like render, but returns both channels.
+    static func renderLR(_ dsp: DSP, freq: Double, amp: Float, seconds: Double, call: (Double, Float)? = nil) -> ([Float], [Float]) {
+        let fs = 48000.0, n = 480
+        let inList = AudioBufferList.allocate(maximumBuffers: call == nil ? 1 : 2)
+        let outList = AudioBufferList.allocate(maximumBuffers: 1)
+        let mBuf = UnsafeMutablePointer<Float>.allocate(capacity: n * 2)
+        let cBuf = UnsafeMutablePointer<Float>.allocate(capacity: n * 2)
+        let oBuf = UnsafeMutablePointer<Float>.allocate(capacity: n * 2)
+        inList[0] = AudioBuffer(mNumberChannels: 2, mDataByteSize: UInt32(n * 8), mData: mBuf)
+        if call != nil { inList[1] = AudioBuffer(mNumberChannels: 2, mDataByteSize: UInt32(n * 8), mData: cBuf) }
+        outList[0] = AudioBuffer(mNumberChannels: 2, mDataByteSize: UInt32(n * 8), mData: oBuf)
+        dsp.sampleRate = Float(fs); dsp.hasCallBus = call != nil; dsp.tapOffset = 0; dsp.coeffVersion &+= 1
+        var L: [Float] = [], R: [Float] = []; var ph = 0.0, phc = 0.0
+        for _ in 0..<(Int(seconds * fs) / n) {
+            for i in 0..<n {
+                let v = amp * Float(sin(ph)); mBuf[2 * i] = v; mBuf[2 * i + 1] = v; ph += 2 * .pi * freq / fs
+                if let call { let c = call.1 * Float(sin(phc)); cBuf[2 * i] = c; cBuf[2 * i + 1] = c; phc += 2 * .pi * call.0 / fs }
+            }
+            dsp.process(input: inList, output: outList)
+            for i in 0..<n { L.append(oBuf[2 * i]); R.append(oBuf[2 * i + 1]) }
+        }
+        mBuf.deallocate(); cBuf.deallocate(); oBuf.deallocate(); free(inList.unsafeMutablePointer); free(outList.unsafeMutablePointer)
+        return (L, R)
+    }
+
     static func dspTests() -> Never {
         var fails = 0
         func check(_ name: String, _ got: Float, _ want: Float, tol: Float = 0.6) {
@@ -162,6 +188,30 @@ enum SelfTest {
             print(String(format: "%@  %-46@ peak %.2f dBFS", ok ? "PASS" : "FAIL", "Studio + all effects + 300% + bass maxed" as NSString, 20 * log10f(pk)))
             let c = sm(1); let co = render(c, freq: 0, amp: 0, seconds: 2, call: (440, 0.05))
             check("Studio never touches the call voice", powf(10, tone(last(co), 440) / 20), -26.0, tol: 0.3)
+        }
+
+        // 8D audio (one circle = 4 s in the test: front → right → behind → left)
+        do {
+            func w(_ x: [Float], _ t: Double) -> ArraySlice<Float> { x[Int((t - 0.05) * 48000)..<Int((t + 0.05) * 48000)] }
+            let d = DSP(); d.eightDOn = true; d.eightDSeconds = 4
+            let (L, R) = renderLR(d, freq: 1000, amp: 0.1, seconds: 4)
+            checkGT("8D: at 1 s the music is on your right", tone(w(R, 1), 1000), tone(w(L, 1), 1000), by: 20)
+            checkGT("8D: at 3 s the music is on your left", tone(w(L, 3), 1000), tone(w(R, 3), 1000), by: 20)
+            let backL = tone(w(L, 2), 1000), backR = tone(w(R, 2), 1000)
+            let ok = abs(backL - backR) < 1.5 && backL < -20.5 && backL > -24
+            if !ok { fails += 1 }
+            print(String(format: "%@  %-46@ L %.1f / R %.1f dB (centred, a bit quieter)", ok ? "PASS" : "FAIL", "8D: at 2 s it's behind you" as NSString, backL, backR))
+            let c = DSP(); c.eightDOn = true; c.eightDSeconds = 4
+            let (cl, cr) = renderLR(c, freq: 1000, amp: 0, seconds: 4, call: (440, 0.05))
+            let callOK = abs(tone(w(cl, 1), 440) - tone(w(cr, 1), 440)) < 0.1 && abs(tone(w(cl, 1), 440) + 26) < 0.3
+            if !callOK { fails += 1 }
+            print(String(format: "%@  %-46@ L %.1f / R %.1f dB", callOK ? "PASS" : "FAIL", "8D: call voice stays centred" as NSString, tone(w(cl, 1), 440), tone(w(cr, 1), 440)))
+            let m = DSP(); m.eightDOn = true; m.eightDSeconds = 4; m.studioAmount = 1; m.mediaGain = 3; m.bassDB = 12
+            let (ml, mr) = renderLR(m, freq: 80, amp: 0.9, seconds: 4)
+            let pk = max(ml.map { abs($0) }.max() ?? 0, mr.map { abs($0) }.max() ?? 0)
+            let clipOK = pk <= 0.8913 && ml.allSatisfy { $0.isFinite }
+            if !clipOK { fails += 1 }
+            print(String(format: "%@  %-46@ peak %.2f dBFS", clipOK ? "PASS" : "FAIL", "8D + Studio + 300% + bass: no clipping" as NSString, 20 * log10f(pk)))
         }
         print(fails == 0 ? "ALL DSP CHECKS PASSED" : "\(fails) DSP CHECK(S) FAILED")
         exit(fails == 0 ? 0 : 1)

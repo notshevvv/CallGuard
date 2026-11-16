@@ -40,6 +40,7 @@ enum Palette {
     static let live = Color(red: 0.2, green: 0.84, blue: 0.4)
     static let fx = Color(red: 0.93, green: 0.33, blue: 0.75)
     static let gold = Color(red: 1.0, green: 0.78, blue: 0.35)
+    static let eightD = Color(red: 0.18, green: 0.85, blue: 0.85)
     static let goldDeep = Color(red: 0.86, green: 0.52, blue: 0.16)
 }
 
@@ -82,6 +83,7 @@ struct PanelView: View {
             studioCard
             soundCard
             effectsCard
+            eightDCard
             sleepCard
             activity
             footer
@@ -292,6 +294,32 @@ struct PanelView: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.85), value: s.fxOn)
     }
 
+    // MARK: 8D audio
+
+    private var eightDCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                SpinIcon(on: s.eightDOn)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("8D Audio").font(.system(size: 13.5, weight: .semibold))
+                    Text("The music circles around your head")
+                        .font(.system(size: 10.5)).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Toggle("", isOn: $s.eightDOn).toggleStyle(.switch).controlSize(.small).labelsHidden().tint(Palette.eightD)
+            }
+            if s.eightDOn {
+                LabeledSlider(label: "Speed", value: $s.eightDSpeed, range: 0...100, step: 5, tint: Palette.eightD) {
+                    $0 < 34 ? "Slow" : ($0 < 70 ? "Medium" : "Fast")
+                }
+                Label("Use earphones. Music only: the call stays in the middle.", systemImage: "headphones")
+                    .font(.system(size: 10.5)).foregroundStyle(.secondary)
+            }
+        }
+        .card()
+        .animation(.spring(response: 0.35, dampingFraction: 0.85), value: s.eightDOn)
+    }
+
     private var pitchLabel: String { s.fxPitch < 0 ? "Slowed" : (s.fxPitch > 0 ? "Sped up" : "Pitch") }
 
     // MARK: sleep
@@ -407,6 +435,29 @@ struct FeatureTile: View {
         .buttonStyle(.plain)
         .glassTile(tint: isOn ? tint.opacity(0.35) : nil)
         .animation(.spring(response: 0.35, dampingFraction: 0.7), value: isOn)
+    }
+}
+
+/// The 8D icon: an orbit that spins while 8D is on.
+struct SpinIcon: View {
+    let on: Bool
+    @State private var angle: Double = 0
+    var body: some View {
+        Image(systemName: "arrow.triangle.2.circlepath")
+            .font(.system(size: 13, weight: .bold)).foregroundStyle(.white)
+            .rotationEffect(.degrees(angle))
+            .frame(width: 30, height: 30)
+            .background(RoundedRectangle(cornerRadius: 9, style: .continuous)
+                .fill(LinearGradient(colors: [Palette.eightD, Palette.duck], startPoint: .topLeading, endPoint: .bottomTrailing)))
+            .onAppear { spin() }
+            .onChange(of: on) { _, _ in spin() }
+    }
+    private func spin() {
+        if on {
+            withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) { angle = 360 }
+        } else {
+            withAnimation(.easeOut(duration: 0.4)) { angle = 0 }
+        }
     }
 }
 

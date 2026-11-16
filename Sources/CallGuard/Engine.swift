@@ -31,6 +31,10 @@ final class DSP: @unchecked Sendable {
     let fx = Effects()
     var studioAmount: Float = 0       // 0…1 (0 = off)
     let studio = StudioMaster()
+    var eightDOn = false
+    var eightDSeconds: Float = 10      // one full circle
+    let eightD = EightD()
+    private var eightDActive = false
     private var studioOn = false
     private var fxActive = false
 
@@ -67,6 +71,8 @@ final class DSP: @unchecked Sendable {
         fxActive = fx.active
         studio.configure(sampleRate: fs, amount: studioAmount)
         studioOn = studio.on
+        eightD.configure(sampleRate: fs, on: eightDOn, secondsPerTurn: eightDSeconds)
+        eightDActive = eightD.active
         let g = bassDB
         if abs(g) < 0.05 { b0 = 1; b1 = 0; b2 = 0; a1 = 0; a2 = 0; return }
         // RBJ low shelf, 110 Hz, slope 1.
@@ -130,6 +136,8 @@ final class DSP: @unchecked Sendable {
             }
             // Effects: Slowed / Sped up, harmony, reverb, width.
             if fxActive { fx.process(&l, &r) }
+            // 8D: the music circles your head (media only; the call stays centred).
+            if eightDActive { eightD.process(&l, &r) }
             let k = gM * fade
             l *= k; r *= k
             // Call voice, mixed in after the media chain.
@@ -178,6 +186,8 @@ final class AudioEngine {
     var mediaFade: Double = 1 { didSet { apply() } }
     var fxOn = false { didSet { apply() } }
     var studioOn = false { didSet { apply() } }
+    var eightDOn = false { didSet { apply() } }
+    var eightDSeconds: Double = 10 { didSet { apply() } }
     var studioAmount: Double = 70 { didSet { apply() } }  // %
     var fxSemitones: Double = 0 { didSet { apply() } }
     var fxHarmony: Double = 0 { didSet { apply() } }      // %
@@ -262,6 +272,8 @@ final class AudioEngine {
         dsp.night = night
         dsp.fxOn = fxOn
         dsp.studioAmount = studioOn ? Float(studioAmount / 100) : 0
+        dsp.eightDOn = eightDOn
+        dsp.eightDSeconds = Float(eightDSeconds)
         dsp.fxSemitones = Float(fxSemitones)
         dsp.fxHarmony = Float(fxHarmony / 100)
         dsp.fxReverb = Float(fxReverb / 100)
