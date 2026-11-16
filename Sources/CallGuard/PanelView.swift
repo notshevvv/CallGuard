@@ -39,6 +39,8 @@ enum Palette {
     static let sleep = Color(red: 0.42, green: 0.45, blue: 1.0)
     static let live = Color(red: 0.2, green: 0.84, blue: 0.4)
     static let fx = Color(red: 0.93, green: 0.33, blue: 0.75)
+    static let gold = Color(red: 1.0, green: 0.78, blue: 0.35)
+    static let goldDeep = Color(red: 0.86, green: 0.52, blue: 0.16)
 }
 
 // MARK: - Panel
@@ -56,10 +58,15 @@ struct PanelView: View {
     @State private var contentHeight: CGFloat = 640
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            content.background(GeometryReader { g in
-                Color.clear.preference(key: ContentHeightKey.self, value: g.size.height)
-            })
+        ScrollViewReader { proxy in
+            ScrollView(.vertical, showsIndicators: false) {
+                content.background(GeometryReader { g in
+                    Color.clear.preference(key: ContentHeightKey.self, value: g.size.height)
+                })
+                .id("top")
+            }
+            .onChange(of: s.scrollToTopToken) { _, _ in proxy.scrollTo("top", anchor: .top) }
+            .onAppear { DispatchQueue.main.async { proxy.scrollTo("top", anchor: .top) } }
         }
         .scrollBounceBehavior(.basedOnSize)
         .defaultScrollAnchor(.top)
@@ -72,6 +79,7 @@ struct PanelView: View {
             header
             tiles
             if s.micLocked { lockStrip.transition(.move(edge: .top).combined(with: .opacity)) }
+            studioCard
             soundCard
             effectsCard
             sleepCard
@@ -211,6 +219,39 @@ struct PanelView: View {
             }
         }
         .card()
+    }
+
+    // MARK: Studio Master
+
+    private var studioCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                    .frame(width: 30, height: 30)
+                    .background(RoundedRectangle(cornerRadius: 9, style: .continuous)
+                        .fill(LinearGradient(colors: [Palette.gold, Palette.goldDeep], startPoint: .topLeading, endPoint: .bottomTrailing)))
+                    .shadow(color: Palette.gold.opacity(s.studioOn ? 0.6 : 0), radius: 6)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Studio Master").font(.system(size: 13.5, weight: .semibold))
+                    Text("Deeper bass · clearer vocals · airy highs")
+                        .font(.system(size: 10.5)).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Toggle("", isOn: $s.studioOn).toggleStyle(.switch).controlSize(.small).labelsHidden().tint(Palette.gold)
+            }
+            if s.studioOn {
+                LabeledSlider(label: "Intensity", value: $s.studioAmount, range: 0...100, step: 5, tint: Palette.gold) {
+                    $0 < 35 ? "Subtle" : ($0 < 75 ? "Rich" : "Max")
+                }
+                .transition(.opacity)
+            }
+        }
+        .card()
+        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous)
+            .strokeBorder(LinearGradient(colors: [Palette.gold.opacity(s.studioOn ? 0.7 : 0.15), .clear, Palette.gold.opacity(s.studioOn ? 0.4 : 0.1)],
+                                         startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1))
+        .animation(.spring(response: 0.35, dampingFraction: 0.85), value: s.studioOn)
     }
 
     // MARK: effects

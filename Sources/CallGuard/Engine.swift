@@ -29,6 +29,9 @@ final class DSP: @unchecked Sendable {
     var fxWarmth: Float = 0.5         // 0…1
     var fxWidth: Float = 1            // 0…2
     let fx = Effects()
+    var studioAmount: Float = 0       // 0…1 (0 = off)
+    let studio = StudioMaster()
+    private var studioOn = false
     private var fxActive = false
 
     // Audio-thread state.
@@ -62,6 +65,8 @@ final class DSP: @unchecked Sendable {
         fx.configure(sampleRate: fs, semitones: fxOn ? fxSemitones : 0, harmonyMix: fxOn ? fxHarmony : 0,
                      reverbMix: fxOn ? fxReverb : 0, room: fxRoom, warmth: fxWarmth, widthAmount: fxOn ? fxWidth : 1)
         fxActive = fx.active
+        studio.configure(sampleRate: fs, amount: studioAmount)
+        studioOn = studio.on
         let g = bassDB
         if abs(g) < 0.05 { b0 = 1; b1 = 0; b2 = 0; a1 = 0; a2 = 0; return }
         // RBJ low shelf, 110 Hz, slope 1.
@@ -113,6 +118,8 @@ final class DSP: @unchecked Sendable {
             let yl = b0 * l + zl1; zl1 = b1 * l - a1 * yl + zl2; zl2 = b2 * l - a2 * yl
             let yr = b0 * r + zr1; zr1 = b1 * r - a1 * yr + zr2; zr2 = b2 * r - a2 * yr
             l = yl; r = yr
+            // Studio Master: harmonic bass, mono low end, de-mud, presence and air.
+            if studioOn { studio.process(&l, &r) }
             // Night Mode: soft compressor so sudden loud bits don't wake you.
             if doNight {
                 let lv = max(abs(l), abs(r))
@@ -170,6 +177,8 @@ final class AudioEngine {
     var callBoostDB: Double = 10 { didSet { apply() } }
     var mediaFade: Double = 1 { didSet { apply() } }
     var fxOn = false { didSet { apply() } }
+    var studioOn = false { didSet { apply() } }
+    var studioAmount: Double = 70 { didSet { apply() } }  // %
     var fxSemitones: Double = 0 { didSet { apply() } }
     var fxHarmony: Double = 0 { didSet { apply() } }      // %
     var fxReverb: Double = 0 { didSet { apply() } }       // %
@@ -252,6 +261,7 @@ final class AudioEngine {
         dsp.bassDB = Float(bassDB)
         dsp.night = night
         dsp.fxOn = fxOn
+        dsp.studioAmount = studioOn ? Float(studioAmount / 100) : 0
         dsp.fxSemitones = Float(fxSemitones)
         dsp.fxHarmony = Float(fxHarmony / 100)
         dsp.fxReverb = Float(fxReverb / 100)

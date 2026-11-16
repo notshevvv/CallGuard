@@ -144,6 +144,8 @@ final class StatusController: NSObject {
         layout()
         panel.orderFrontRegardless()
         panel.makeKey()
+        panel.makeFirstResponder(nil)        // don't auto-focus (and auto-scroll to) a control
+        state.scrollToTopToken &+= 1
         state.panelOpen = true
         guard autoClose else { return }
         clickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in

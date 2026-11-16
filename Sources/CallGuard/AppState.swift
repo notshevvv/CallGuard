@@ -39,6 +39,11 @@ final class AppState: ObservableObject {
         d.set(night, forKey: "night.on"); syncEngine() } }
     @Published var callVolume: Double = 100 { didSet { guard !isDemo else { return }
         d.set(callVolume, forKey: "call.volume"); syncEngine() } }
+    // MARK: Studio Master (saved)
+    @Published var studioOn = false { didSet { guard !isDemo else { return }; d.set(studioOn, forKey: "studio.on"); syncEngine()
+        if oldValue != studioOn { log("sparkles", studioOn ? "Studio Master on" : "Studio Master off") } } }
+    @Published var studioAmount: Double = 70 { didSet { guard !isDemo else { return }; d.set(studioAmount, forKey: "studio.amount"); syncEngine() } }
+
     // MARK: effects (saved)
     @Published var fxOn = false { didSet { guard !isDemo else { return }; d.set(fxOn, forKey: "fx.on"); syncEngine() } }
     @Published var fxPitch: Double = 0 { didSet { saveFX() } }        // semitones
@@ -104,6 +109,7 @@ final class AppState: ObservableObject {
     @Published var callLevel: Float = 0
     @Published var log: [LogEntry] = []
     @Published var launchAtLogin = false
+    @Published var scrollToTopToken = 0
     @Published var panelOpen = false { didSet { meterTimer(panelOpen) } }
 
     enum DuckState: Equatable { case idle, off, dodged, fallback(String), needsHeadphones }
@@ -126,6 +132,8 @@ final class AppState: ObservableObject {
         callVolume = d.object(forKey: "call.volume") as? Double ?? 100
         callExtra = d.object(forKey: "call.extra") as? Double ?? 10
         fxOn = d.bool(forKey: "fx.on")
+        studioOn = d.bool(forKey: "studio.on")
+        studioAmount = d.object(forKey: "studio.amount") as? Double ?? 70
         fxPitch = d.object(forKey: "fx.pitch") as? Double ?? 0
         fxReverb = d.object(forKey: "fx.reverb") as? Double ?? 0
         fxRoom = d.object(forKey: "fx.room") as? Double ?? 60
@@ -187,6 +195,8 @@ final class AppState: ObservableObject {
         engine.callVolumePercent = callVolume
         engine.callBoostDB = callExtra
         engine.fxOn = fxOn
+        engine.studioOn = studioOn
+        engine.studioAmount = studioAmount
         engine.fxSemitones = fxPitch
         engine.fxReverb = fxReverb
         engine.fxRoom = fxRoom
@@ -195,7 +205,7 @@ final class AppState: ObservableObject {
         engine.fxWarmth = fxWarmth
         engine.mediaFade = mediaFaded ? 0 : 1
         engine.stopDucking = stopDucking
-        engine.setOn(stopDucking || boostOn || night || sleepActive || fxOn)
+        engine.setOn(stopDucking || boostOn || night || sleepActive || fxOn || studioOn)
         changed()
     }
 
@@ -319,6 +329,7 @@ final class AppState: ObservableObject {
         let s = AppState(demo: true)
         s.micLocked = true; s.stopDucking = true; s.hifiOn = true; s.boostOn = true
         s.gain = 180; s.bass = 6; s.night = true; s.callVolume = 100
+        s.studioOn = true; s.studioAmount = 70
         s.fxOn = true; s.fxPitch = -3; s.fxReverb = 40; s.fxRoom = 85; s.fxHarmony = 0; s.fxWidth = 120; s.fxPreset = "Slowed + Reverb"
         s.autoLockMinutes = 20; s.autoUnlock = true
         s.sleepMinutes = 30; s.sleepEndsAt = Date().addingTimeInterval(23 * 60 + 41)

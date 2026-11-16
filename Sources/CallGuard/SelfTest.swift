@@ -142,6 +142,27 @@ enum SelfTest {
         let finite = o.allSatisfy { $0.isFinite }
         print(String(format: "%@  %-46@ peak %.2f dBFS", (pk <= 0.8913 && finite) ? "PASS" : "FAIL", "everything maxed: no clipping, no blow-up" as NSString, 20 * log10f(pk)))
         if !(pk <= 0.8913 && finite) { fails += 1 }
+
+        // Studio Master
+        func sm(_ amt: Float) -> DSP { let d = DSP(); d.studioAmount = amt; return d }
+        func lvl(_ d: DSP, _ f: Double, at: Double? = nil) -> Float { let o = render(d, freq: f, amp: 0.05, seconds: 2); return tone(last(o), at ?? f) }
+        checkGT("Studio: harmonic bass adds 100 Hz to a 50 Hz note", lvl(sm(1), 50, at: 100), lvl(sm(0), 50, at: 100), by: 30)
+        check("Studio: 50 Hz note itself kept", powf(10, lvl(sm(1), 50) / 20), -26 + 1.0, tol: 2.5)
+        checkGT("Studio: cuts sub-sonic rumble at 12 Hz", lvl(sm(0), 12), lvl(sm(1), 12), by: 5)
+        check("Studio: de-mud dip at 320 Hz", powf(10, lvl(sm(1), 320) / 20), -26 - 2.5, tol: 0.8)
+        check("Studio: air shelf at 14 kHz", powf(10, lvl(sm(1), 14000) / 20), -26 + 3.4, tol: 1.0)
+        check("Studio: 1 kHz (vocals) left natural", powf(10, lvl(sm(1), 1000) / 20), -26, tol: 0.7)
+        do {
+            let d = sm(1); d.fxOn = true; d.fxReverb = 1; d.fxRoom = 1; d.fxHarmony = 1; d.fxSemitones = 4; d.fxWidth = 2
+            d.bassDB = 12; d.mediaGain = 3
+            let o = render(d, freq: 60, amp: 0.9, seconds: 3)
+            let pk = o.map { abs($0) }.max() ?? 0
+            let ok = pk <= 0.8913 && o.allSatisfy { $0.isFinite }
+            if !ok { fails += 1 }
+            print(String(format: "%@  %-46@ peak %.2f dBFS", ok ? "PASS" : "FAIL", "Studio + all effects + 300% + bass maxed" as NSString, 20 * log10f(pk)))
+            let c = sm(1); let co = render(c, freq: 0, amp: 0, seconds: 2, call: (440, 0.05))
+            check("Studio never touches the call voice", powf(10, tone(last(co), 440) / 20), -26.0, tol: 0.3)
+        }
         print(fails == 0 ? "ALL DSP CHECKS PASSED" : "\(fails) DSP CHECK(S) FAILED")
         exit(fails == 0 ? 0 : 1)
     }
