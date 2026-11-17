@@ -2,11 +2,16 @@
 # Builds CallGuard.app into ./dist   (usage: ./build.sh)
 set -euo pipefail
 cd "${0:A:h}"
-VERSION="${VERSION:-3.3.0}"
+VERSION="${VERSION:-3.3.1}"
 BUNDLE_ID="${BUNDLE_ID:-app.callguard.CallGuard}"
 
-swift build -c release --arch arm64 --arch x86_64 2>/dev/null || swift build -c release
-BIN=$(swift build -c release --arch arm64 --arch x86_64 --show-bin-path 2>/dev/null || swift build -c release --show-bin-path)
+# Build each chip separately (own build folder each) and join them; no Xcode build system needed.
+for A in arm64 x86_64; do
+  swift build -c release --triple $A-apple-macosx14.4 --build-path .build/$A
+done
+mkdir -p .build/universal
+lipo -create .build/arm64/release/CallGuard .build/x86_64/release/CallGuard -output .build/universal/CallGuard
+BIN=.build/universal
 
 APP=dist/CallGuard.app
 rm -rf "$APP"

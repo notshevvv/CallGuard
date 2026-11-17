@@ -478,17 +478,23 @@ final class AudioEngine {
         let advancing = dsp.blocks != lastBlocks
         lastBlocks = dsp.blocks
         let heard = advancing && (dsp.mediaPeak > 0 || dsp.callPeak > 0)
-        if heard { heardSomething = true }
-        if othersPlaying, !heard { silentPolls += 1 } else { silentPolls = 0; if heard { captureBlocked = false } }
+        if heard { heardSomething = true; captureBlocked = false }
+        // Silence is normal (a paused video keeps its audio open). Only an engine that has
+        // stopped processing audio altogether means macOS is blocking it.
+        if Self.looksStalled(othersPlaying: othersPlaying, enginePulled: advancing) { silentPolls += 1 } else { silentPolls = 0 }
         guard silentPolls >= 3 else { return }
         silentPolls = 0
         captureBlocked = true
-        fail("macOS isn't letting CallGuard hear your audio. Turn CallGuard on in System Settings → Privacy & Security → Screen & System Audio Recording (under System Audio Recording Only), then reopen CallGuard.")
+        fail("macOS isn't letting CallGuard process audio. If this keeps happening, turn CallGuard on in System Settings → Privacy & Security → Screen & System Audio Recording.")
         retryAt = Date().addingTimeInterval(60)
-        onEvent?("exclamationmark.octagon.fill", "Audio permission missing: sound sent straight to your output")
-        if let url = URL(string: "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_AudioCapture") {
-            NSWorkspace.shared.open(url)
-        }
+        onEvent?("exclamationmark.octagon.fill", "Audio engine stalled: sound sent straight to your output")
+    }
+
+    /// The stall rule, kept pure so it can be tested: apps are playing but our audio callback
+    /// hasn't run since the last check. Hearing silence is NOT a stall (paused videos keep their
+    /// audio open); that mistake made 3.3.0 open System Settings every minute.
+    static func looksStalled(othersPlaying: Bool, enginePulled: Bool) -> Bool {
+        othersPlaying && !enginePulled
     }
 
     /// A small status file for troubleshooting: ~/Library/Application Support/CallGuard/status.json

@@ -213,6 +213,19 @@ enum SelfTest {
             if !clipOK { fails += 1 }
             print(String(format: "%@  %-46@ peak %.2f dBFS", clipOK ? "PASS" : "FAIL", "8D + Studio + 300% + bass: no clipping" as NSString, 20 * log10f(pk)))
         }
+        // Regression (3.3.0 opened System Settings every minute): silence is not a stall.
+        do {
+            let cases: [(String, Bool, Bool, Bool)] = [
+                ("app playing silence, engine running → not stalled", true, true, false),
+                ("nothing playing, engine idle → not stalled", false, false, false),
+                ("app playing, engine not running → stalled", true, false, true),
+            ]
+            for (name, playing, pulled, want) in cases {
+                let got = AudioEngine.looksStalled(othersPlaying: playing, enginePulled: pulled)
+                if got != want { fails += 1 }
+                print("\(got == want ? "PASS" : "FAIL")  stall rule: \(name)")
+            }
+        }
         print(fails == 0 ? "ALL DSP CHECKS PASSED" : "\(fails) DSP CHECK(S) FAILED")
         exit(fails == 0 ? 0 : 1)
     }
